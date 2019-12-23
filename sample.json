@@ -1,0 +1,58 @@
+{
+    "layers": [
+        {
+            "dataType": {
+                "type": "sprite",
+                "attributes": {
+                    "path": "jao.png"
+                }
+            },
+            "events": [
+                {
+                    "name": "initialize",
+                    "actions": [
+                        {
+                            "library": "jao.standards",
+                            "name": "Opacity",
+                            "attribute": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "default",
+                    "actions": [
+                        {
+                            "library": "jao.standards",
+                            "name": "PulseOverTime",
+                            "when": "second 0",
+                            "attributes": {
+                                "start_opacity": "0",
+                                "end_opacity": "1",
+                                "duration": "seconds 1",
+                                "bounce": "true",
+                                "loop": "true"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "something_else",
+                    "actions": [
+                        {
+                            "library": "jao.standards",
+                            "name": "PulseOverTime",
+                            "when": "second 0",
+                            "attributes": {
+                                "start_opacity": "0",
+                                "end_opacity": "1",
+                                "duration": "seconds 2",
+                                "bounce": "true",
+                                "loop": "true"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

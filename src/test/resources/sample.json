@@ -1,0 +1,36 @@
+{
+	"events": [
+		{
+			"library": "jao.standards",
+			"name": "FadeIn",
+			"when": "second 0",
+			"attributes": {
+				"start_opacity": "0",
+				"end_opacity": "1",
+				"step": "0.01"
+			}
+		},
+		{
+			"library": "jao.standards",
+			"name": "FadeOut",
+			"when": "second 5",
+			"attributes": {
+				"start_opacity": "1",
+				"end_opacity": "0",
+				"step": "0.01"
+			}
+		},
+		{
+			"library": "jao.standards",
+			"name": "Pulse",
+			"when": "second 7",
+			"attributes": {
+				"start_opacity": "0",
+				"end_opacity": "1",
+				"step": "0.01",
+				"loop": true,
+				"bounce": true
+			}
+		}
+	]
+}
