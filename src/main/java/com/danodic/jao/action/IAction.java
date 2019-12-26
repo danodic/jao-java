@@ -1,6 +1,12 @@
 package com.danodic.jao.action;
 
-public interface IAction extends IInitializer {
+import com.danodic.jao.core.JaoLayer;
+import com.danodic.jao.model.ActionModel;
+
+public interface IAction {
+	public void run(JaoLayer layer);
+
+	public void loadModel(ActionModel model);
 
 	public void reset();
 

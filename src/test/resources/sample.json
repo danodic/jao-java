@@ -12,7 +12,7 @@
                     "name": "initialize",
                     "actions": [
                         {
-                            "library": "jao.standards",
+                            "library": "jao.unittest",
                             "name": "Opacity",
                             "attribute": "0"
                         }
@@ -22,7 +22,7 @@
                     "name": "default",
                     "actions": [
                         {
-                            "library": "jao.standards",
+                            "library": "jao.unittest",
                             "name": "PulseOverTime",
                             "when": "second 0",
                             "attributes": {
@@ -39,7 +39,7 @@
                     "name": "something_else",
                     "actions": [
                         {
-                            "library": "jao.standards",
+                            "library": "jao.unittest",
                             "name": "PulseOverTime",
                             "when": "second 0",
                             "attributes": {

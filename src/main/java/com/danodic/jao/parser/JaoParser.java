@@ -14,6 +14,8 @@ import com.danodic.jao.core.JaoLayer;
 import com.danodic.jao.event.Event;
 import com.danodic.jao.event.EventAction;
 import com.danodic.jao.event.InitializerEvent;
+import com.danodic.jao.exceptions.CannotFindJaoInitializerException;
+import com.danodic.jao.exceptions.CannotFindJaoLibraryException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoActiontException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoRenderer;
 import com.danodic.jao.model.ActionModel;
@@ -46,9 +48,12 @@ public class JaoParser {
 	 *                                              couldn`t be instantiated.
 	 * @throws CannotInstantiateJaoRenderer         In case the renderer couldn`t be
 	 *                                              instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	public static Jao parseJson(String json, Class<? extends IRenderer> renderer)
-			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 
 		// Get the Jao Model
 		JaoModel model = deserializeJson(json);
@@ -81,9 +86,12 @@ public class JaoParser {
 	 *                                              instantiated.
 	 * @throws CannotInstantiateJaoRenderer         In case the renderer couldn`t be
 	 *                                              instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static Jao parseJaoModel(JaoModel model, Class<? extends IRenderer> renderer)
-			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 
 		// Parse the layers in the model extracted from the JSON
 		List<JaoLayer> layers = parseLayers(model.getLayers(), renderer);
@@ -105,9 +113,12 @@ public class JaoParser {
 	 *                                              initialized.
 	 * @throws CannotInstantiateJaoRenderer         In case the rendered couldn`t be
 	 *                                              initialized.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static List<JaoLayer> parseLayers(List<LayerModel> layers, Class<? extends IRenderer> renderer)
-			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		List<JaoLayer> layerInstances = new ArrayList<JaoLayer>();
 		for (LayerModel layer : layers)
 			layerInstances.add(parseLayer(layer, renderer));
@@ -123,9 +134,12 @@ public class JaoParser {
 	 * @return
 	 * @throws CannotInstantiateJaoActiontException
 	 * @throws CannotInstantiateJaoRenderer
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static JaoLayer parseLayer(LayerModel layerModel, Class<? extends IRenderer> renderer)
-			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		// Create the renderer and set the data type into it
 		IRenderer rendererImpl = getRendererInstance(renderer);
 		rendererImpl.setDataType(layerModel.getDataType());
@@ -173,9 +187,12 @@ public class JaoParser {
 	 * @throws CannotInstantiateJaoActiontException In case any of the actions
 	 *                                              inside the events couldn`t be
 	 *                                              instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static Map<String, Event> parseEvents(JaoLayer jaoLayer, List<EventModel> eventModels)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		Map<String, Event> events = new HashMap<String, Event>();
 		for (EventModel event : eventModels) {
 			if (event.getName().equalsIgnoreCase("initialize"))
@@ -195,9 +212,12 @@ public class JaoParser {
 	 *         initializers ready to run.
 	 * @throws CannotInstantiateJaoActiontException In case any of the initializers
 	 *                                              couldn`t be instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static InitializerEvent parseInitializers(JaoLayer jaoLayer, List<EventModel> eventModels)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		InitializerEvent init = new InitializerEvent();
 		for (EventModel event : eventModels) {
 			if (event.getName().equalsIgnoreCase("initialize")) {
@@ -218,9 +238,12 @@ public class JaoParser {
 	 * @return An instance of Event with the data fed by EventModel.
 	 * @throws CannotInstantiateJaoActiontException In case the Action cannot be
 	 *                                              instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static Event parseEvent(JaoLayer jaoLayer, EventModel eventModel)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		Event event = new Event();
 		event.addActions(parseActions(jaoLayer, event, eventModel.getActions()));
 		return event;
@@ -236,9 +259,12 @@ public class JaoParser {
 	 *                 from.
 	 * @throws CannotInstantiateJaoActiontException In case the action could not be
 	 *                                              implemented by some reason.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static List<EventAction> parseActions(JaoLayer jaoLayer, Event event, List<ActionModel> actionModels)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		List<EventAction> actions = new ArrayList<EventAction>();
 		for (ActionModel action : actionModels) {
 			actions.add(parseAction(jaoLayer, action));
@@ -255,9 +281,12 @@ public class JaoParser {
 	 * @return An instance of IInitializer setup the with the model data.
 	 * @throws CannotInstantiateJaoActiontException In case the initializer couldn`t
 	 *                                              be instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static IInitializer parseInitializer(JaoLayer jaoLayer, ActionModel action)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 		IInitializer initImpl = ActionFactory.getInitializer(action.getLibrary(), action.getName(), action);
 		initImpl.loadModel(action);
 		return initImpl;
@@ -272,9 +301,12 @@ public class JaoParser {
 	 * @return An instance of EventAction.
 	 * @throws CannotInstantiateJaoActiontException In case the Action cannot be
 	 *                                              instantiated.
+	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoLibraryException
 	 */
 	private static EventAction parseAction(JaoLayer jaoLayer, ActionModel action)
-			throws CannotInstantiateJaoActiontException {
+			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			CannotFindJaoInitializerException {
 
 		// Find the action implementation in the factory that is going to be
 		// used by this action. Also feed the model so that it initializes the

@@ -1,5 +1,7 @@
 package com.danodic.jao.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,8 @@ public class JaoLayer {
 	private List<IInitializer> initializers;
 
 	public JaoLayer(IRenderer rendererImpl) {
+		events = new HashMap<String, Event>();
+		initializers = new ArrayList<IInitializer>();
 		this.renderer = rendererImpl;
 	}
 
