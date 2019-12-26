@@ -18,7 +18,7 @@ public class Main {
 		gson.fromJson(datal, JaoModel.class);
 		
 		System.out.println("debug");
-
+		
 	}
 
 }

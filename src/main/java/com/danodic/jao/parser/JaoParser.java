@@ -1,5 +1,6 @@
 package com.danodic.jao.parser;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,24 +15,40 @@ import com.danodic.jao.event.Event;
 import com.danodic.jao.event.EventAction;
 import com.danodic.jao.event.InitializerEvent;
 import com.danodic.jao.exceptions.CannotInstantiateJaoActiontException;
+import com.danodic.jao.exceptions.CannotInstantiateJaoRenderer;
 import com.danodic.jao.model.ActionModel;
-import com.danodic.jao.model.DataTypeModel;
 import com.danodic.jao.model.EventModel;
 import com.danodic.jao.model.JaoModel;
 import com.danodic.jao.model.LayerModel;
 import com.danodic.jao.parser.expressions.TimeExpressionParser;
+import com.danodic.jao.renderer.IRenderer;
 import com.google.gson.Gson;
 
 /**
- * This class parses the contents of a json.jao file and return an instance of
- * the Jao class.
+ * This class is the main parser, that will extract the information from the
+ * json file and build the Jao instance with the information contained in the
+ * json.
  * 
  * @author danodic
- *
  */
 public class JaoParser {
 
-	public static Animation parseJson(String json) {
+	/**
+	 * Will parse the json provided as a string and will instantiate a Jao object
+	 * and populate it with the data obtained from the JSON. It needs a renderer
+	 * class reference so that it knows which renderer to use when instantiating the
+	 * IAction intances in the deeper, darkest levels of this dunge.. code.
+	 * 
+	 * @param json     The contents of the json to be parsed.
+	 * @param renderer A reference to the desired renderer class.
+	 * @return An instance of Jao.
+	 * @throws CannotInstantiateJaoActiontException In case one of the actions used
+	 *                                              couldn`t be instantiated.
+	 * @throws CannotInstantiateJaoRenderer         In case the renderer couldn`t be
+	 *                                              instantiated.
+	 */
+	public static Jao parseJson(String json, Class<? extends IRenderer> renderer)
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
 
 		// Get the Jao Model
 		JaoModel model = deserializeJson(json);
@@ -39,9 +56,8 @@ public class JaoParser {
 		// Initialize the action factory to find all the entries in the classpath
 		ActionFactory.initializeFactory();
 
-		// Start parsing the model
-		parseJaoModel(model);
-
+		// Parse the model and return the instance
+		return parseJaoModel(model, renderer);
 	}
 
 	/**
@@ -54,23 +70,96 @@ public class JaoParser {
 		return new Gson().fromJson(json, JaoModel.class);
 	}
 
-	private static void parseJaoModel(JaoModel model) throws CannotInstantiateJaoActiontException {
-		parseLayers(model.getLayers());
+	/**
+	 * Will parse a JaoModel and populate a Jao instance with the information from
+	 * the JSON file.
+	 * 
+	 * @param model    The model extracted from the JSON file.
+	 * @param renderer The renderer class that will be used.
+	 * @return An instance of Jao with all the information needed in it.
+	 * @throws CannotInstantiateJaoActiontException In case an action couldn`t be
+	 *                                              instantiated.
+	 * @throws CannotInstantiateJaoRenderer         In case the renderer couldn`t be
+	 *                                              instantiated.
+	 */
+	private static Jao parseJaoModel(JaoModel model, Class<? extends IRenderer> renderer)
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+
+		// Parse the layers in the model extracted from the JSON
+		List<JaoLayer> layers = parseLayers(model.getLayers(), renderer);
+
+		// Populate the main Jao information and return it
+		Jao jao = new Jao();
+		jao.addLayers(layers);
+		return jao;
 	}
 
-	private static void parseLayers(List<LayerModel> layers) throws CannotInstantiateJaoActiontException {
+	/**
+	 * Will parse each individual layer and return a list of layers to be added to
+	 * the main Jao instance.
+	 * 
+	 * @param layers   List of layer models parsed from the JSON file.
+	 * @param renderer The class of the renderer to be used for this layer.
+	 * @return A list of JaoLayer instances.
+	 * @throws CannotInstantiateJaoActiontException In case an action couldn`t be
+	 *                                              initialized.
+	 * @throws CannotInstantiateJaoRenderer         In case the rendered couldn`t be
+	 *                                              initialized.
+	 */
+	private static List<JaoLayer> parseLayers(List<LayerModel> layers, Class<? extends IRenderer> renderer)
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+		List<JaoLayer> layerInstances = new ArrayList<JaoLayer>();
 		for (LayerModel layer : layers)
-			parseLayer(layer);
+			layerInstances.add(parseLayer(layer, renderer));
+		return layerInstances;
 	}
 
-	private static JaoLayer parseLayer(LayerModel layerModel) throws CannotInstantiateJaoActiontException {
-		JaoLayer layer = new JaoLayer();
+	/**
+	 * Parse the layer models, add both the events and the initializers to the
+	 * layer. W
+	 * 
+	 * @param layerModel
+	 * @param renderer
+	 * @return
+	 * @throws CannotInstantiateJaoActiontException
+	 * @throws CannotInstantiateJaoRenderer
+	 */
+	private static JaoLayer parseLayer(LayerModel layerModel, Class<? extends IRenderer> renderer)
+			throws CannotInstantiateJaoActiontException, CannotInstantiateJaoRenderer {
+		// Create the renderer and set the data type into it
+		IRenderer rendererImpl = getRendererInstance(renderer);
+		rendererImpl.setDataType(layerModel.getDataType());
 
-		// parseDataType(layerModel.getDataType());
+		// Instantiate the JAO layer and add the initializers and events to it
+		JaoLayer layer = new JaoLayer(rendererImpl);
 		layer.addInitializers(parseInitializers(layer, layerModel.getEvents()));
 		layer.addEvents(parseEvents(layer, layerModel.getEvents()));
 
 		return layer;
+	}
+
+	/**
+	 * Will instantiate the renderer class provided. That renderer must be able to
+	 * be instantiated using an argument-free constructor.
+	 * 
+	 * @param renderer A class corresponding to the renderer to be used.
+	 * @return An instance of the renderer provided.
+	 * @throws CannotInstantiateJaoRenderer
+	 */
+	private static IRenderer getRendererInstance(Class<? extends IRenderer> renderer)
+			throws CannotInstantiateJaoRenderer {
+		IRenderer rendererImpl = null;
+		for (Constructor<?> constructor : renderer.getConstructors()) {
+			if (constructor.getParameterCount() == 0) {
+				try {
+					rendererImpl = (IRenderer) constructor.newInstance();
+					break;
+				} catch (Exception e) {
+					throw new CannotInstantiateJaoRenderer(e);
+				}
+			}
+		}
+		return rendererImpl;
 	}
 
 	/**
@@ -197,10 +286,6 @@ public class JaoParser {
 		Long when = TimeExpressionParser.parseExpression(action.getWhen());
 
 		return new EventAction(jaoLayer, actionImpl, when);
-
-	}
-
-	private static void parseDataType(DataTypeModel dataType) {
 
 	}
 }
