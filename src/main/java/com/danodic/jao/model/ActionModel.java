@@ -7,6 +7,7 @@ public class ActionModel {
 	private String library;
 	private String name;
 	private String when;
+	private String attribute;
 	private Map<String, String> attributes;
 
 	public String getLibrary() {
@@ -39,6 +40,14 @@ public class ActionModel {
 
 	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
+	}
+
+	public String getAttribute() {
+		return attribute;
+	}
+
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
 	}
 
 }

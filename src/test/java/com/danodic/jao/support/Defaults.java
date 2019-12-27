@@ -4,6 +4,7 @@ import java.io.PrintStream;
 
 public class Defaults {
 
-    public static PrintStream defaultPrintStream = System.out;
+    public static final String SAMPLE_JSON = "./src/test/resources/sample.json";
+	public static PrintStream defaultPrintStream = System.out;
     
 }

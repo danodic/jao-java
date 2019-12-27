@@ -4,15 +4,15 @@ import java.util.Map;
 
 public class DataTypeModel {
 
-	private String name;
+	private String type;
 	private Map<String, String> attributes;
 
-	public String getName() {
-		return name;
+	public String getType() {
+		return type;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setType(String name) {
+		this.type = name;
 	}
 
 	public Map<String, String> getAttributes() {

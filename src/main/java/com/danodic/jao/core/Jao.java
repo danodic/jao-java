@@ -28,18 +28,18 @@ public class Jao {
 
 	public void render () {
 		updateElapsed();
-		for (JaoLayer layer : layers)
-			layer.render(elapsed);
+		for (JaoLayer layer : layers);
+			//layer.render(elapsed);
 	}
 	
 	public void reset () {
-		for (JaoLayer layer : layers)
-			layer.reset();
+		for (JaoLayer layer : layers);
+			//layer.reset();
 	}
 	
 	public void prepareToFinish () {
-		for (JaoLayer layer : layers)
-			layer.setLoop(false);
+		for (JaoLayer layer : layers);
+			//layer.setLoop(false);
 	}
 	
 	private void updateElapsed() {
@@ -57,8 +57,8 @@ public class Jao {
 
 	public boolean isDone() {
 		for (JaoLayer layer : layers) {
-			if (!layer.isDone())
-				return false;
+			//if (!layer.isDone())
+			//	return false;
 		}
 
 		return true;

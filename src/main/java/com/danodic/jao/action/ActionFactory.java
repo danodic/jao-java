@@ -10,9 +10,10 @@ import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
+import com.danodic.jao.exceptions.CannotFindJaoActionException;
 import com.danodic.jao.exceptions.CannotFindJaoInitializerException;
 import com.danodic.jao.exceptions.CannotFindJaoLibraryException;
-import com.danodic.jao.exceptions.CannotInstantiateJaoActiontException;
+import com.danodic.jao.exceptions.CannotInstantiateJaoActionException;
 import com.danodic.jao.model.ActionModel;
 
 public class ActionFactory {
@@ -105,12 +106,12 @@ public class ActionFactory {
 	 * @param libraryName
 	 * @param actionName
 	 * @return an instance of a class that implements IEvent.
-	 * @throws CannotInstantiateJaoActiontException
+	 * @throws CannotInstantiateJaoActionException
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 */
-	public static IAction getAction(String libraryName, String actionName) throws CannotInstantiateJaoActiontException,
-			CannotFindJaoLibraryException, CannotFindJaoInitializerException {
+	public static IAction getAction(String libraryName, String actionName) throws CannotInstantiateJaoActionException,
+			CannotFindJaoLibraryException, CannotFindJaoActionException {
 		return getAction(libraryName, actionName, null);
 	}
 
@@ -123,15 +124,16 @@ public class ActionFactory {
 	 * @param actionName  Name of the action to be retrieved from the library.
 	 * @param model       The data of the action parsed from the Json file.
 	 * @return an instance of a class that implements IAction.
-	 * @throws CannotInstantiateJaoActiontException In case it cannot instantiate
+	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate
 	 *                                              the initializer.
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoInitializerException
+	 * @throws CannotFindJaoActionException
 	 */
 	@SuppressWarnings("unchecked")
 	public static IAction getAction(String libraryName, String actionName, ActionModel model)
-			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException {
+			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
+			CannotFindJaoActionException {
 		IAction action;
 		Constructor<IAction> defaultContructor;
 
@@ -143,7 +145,7 @@ public class ActionFactory {
 			throw new CannotFindJaoLibraryException(libraryName);
 		}
 		if(!actionLibrary.get(libraryName).containsKey(actionName)) {
-			throw new CannotFindJaoInitializerException(actionName);
+			throw new CannotFindJaoActionException(actionName);
 		}
 
 		// Get the constructor with no parameters
@@ -168,7 +170,7 @@ public class ActionFactory {
 
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new CannotInstantiateJaoActiontException(actionName, e);
+			throw new CannotInstantiateJaoActionException(actionName, e);
 		}
 
 	}
@@ -180,12 +182,12 @@ public class ActionFactory {
 	 * @param libraryName
 	 * @param initializerName
 	 * @return an instance of a class that implements IInitializer.
-	 * @throws CannotInstantiateJaoActiontException
+	 * @throws CannotInstantiateJaoActionException
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 */
 	public static IInitializer getInitializer(String libraryName, String initializerName)
-			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
 			CannotFindJaoInitializerException {
 		return getInitializer(libraryName, initializerName, null);
 	}
@@ -199,14 +201,14 @@ public class ActionFactory {
 	 * @param initializeName  Name of the initializer to be retrieved from the library.
 	 * @param model       The data of the action parsed from the Json file.
 	 * @return an instance of a class that implements IInitializer.
-	 * @throws CannotInstantiateJaoActiontException In case it cannot instantiate
+	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate
 	 *                                              the initializer.
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoInitializerException
 	 */
 	@SuppressWarnings("unchecked")
 	public static IInitializer getInitializer(String libraryName, String initializeName, ActionModel model)
-			throws CannotInstantiateJaoActiontException, CannotFindJaoLibraryException,
+			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
 			CannotFindJaoInitializerException {
 		IInitializer initializer;
 		Constructor<IInitializer> defaultContructor;
@@ -243,7 +245,7 @@ public class ActionFactory {
 
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			throw new CannotInstantiateJaoActiontException(initializeName, e);
+			throw new CannotInstantiateJaoActionException(initializeName, e);
 		}
 
 	}
