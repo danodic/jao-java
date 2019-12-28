@@ -3,8 +3,8 @@ package com.danodic.jao.exceptions;
 public class CannotFindJaoElementException extends Exception {
 
 	private static final long serialVersionUID = 1352232242053091333L;
-	private String name;
-	private String type;
+	private final String name;
+	private final String type;
 
 	public CannotFindJaoElementException(String name, String type) {
 		this.name = name;
@@ -25,16 +25,7 @@ public class CannotFindJaoElementException extends Exception {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getType() {
 		return type;
 	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 }

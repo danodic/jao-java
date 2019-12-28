@@ -43,8 +43,8 @@ public class JaoLayer {
 	public JaoLayer(Jao jao, IRenderer rendererImpl) {
 		this.jao = jao;
 
-		events = new HashMap<String, Event>();
-		initializers = new ArrayList<IInitializer>();
+		events = new HashMap<>();
+		initializers = new ArrayList<>();
 		parameters = new LayerParameters();
 		renderer = rendererImpl;
 

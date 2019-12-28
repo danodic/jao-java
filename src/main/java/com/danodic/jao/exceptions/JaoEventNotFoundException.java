@@ -3,7 +3,7 @@ package com.danodic.jao.exceptions;
 public class JaoEventNotFoundException extends Exception {
 
 	private static final long serialVersionUID = 1352232242053091333L;
-	private String eventName;
+	private final String eventName;
 
 	public JaoEventNotFoundException(String eventName) {
 		this.eventName = eventName;

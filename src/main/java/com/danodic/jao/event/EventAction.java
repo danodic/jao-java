@@ -53,7 +53,7 @@ public class EventAction implements Comparable<EventAction>{
 	}
 
 	public void setLoop(boolean loop) {
-		action.setLoop(false);		
+		action.setLoop(loop);		
 	}
 
 }

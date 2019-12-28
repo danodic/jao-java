@@ -3,8 +3,8 @@ package com.danodic.jao.exceptions;
 public class CannotInstantiateJaoActionException extends Exception {
 	private static final long serialVersionUID = -3157203023738787038L;
 
-	private String eventName;
-	private Exception exception;
+	private final String eventName;
+	private final Exception exception;
 
 	public CannotInstantiateJaoActionException(String eventName, Exception e) {
 		this.eventName = eventName;

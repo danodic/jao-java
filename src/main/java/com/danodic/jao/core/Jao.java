@@ -63,7 +63,7 @@ public class Jao {
 	 * @param layers A list of JaoLayer.
 	 */
 	public void addLayers(List<JaoLayer> layers) {
-		layers.addAll(layers);
+		this.layers.addAll(layers);
 	}
 
 	/**

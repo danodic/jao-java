@@ -41,7 +41,7 @@ public class ZipExtractor implements IExtractor {
 		InputStream inputStream;
 
 		// Initialize data
-		data = new HashMap<String, byte[]>();
+		data = new HashMap<>();
 		json = null;
 
 		// Create the zip file object
@@ -84,7 +84,8 @@ public class ZipExtractor implements IExtractor {
 			try {
 				file.close();
 			} catch (IOException e) {
-			}
+			} // There is no need to handle exception to close file as we just want to finish
+			  // up with this file handling.
 		}
 
 		// Throw an exception in case we have no json

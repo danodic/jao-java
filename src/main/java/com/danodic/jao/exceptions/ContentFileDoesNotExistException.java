@@ -3,7 +3,7 @@ package com.danodic.jao.exceptions;
 public class ContentFileDoesNotExistException extends Exception {
 
 	private static final long serialVersionUID = 1352232242053091333L;
-	private String fileName;
+	private final String fileName;
 
 	public ContentFileDoesNotExistException(String fileName) {
 		this.fileName = fileName;

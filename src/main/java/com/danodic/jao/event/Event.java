@@ -11,15 +11,12 @@ public class Event {
 	private List<EventAction> allEvents;
 	private List<EventAction> pool;
 	private List<EventAction> running;
-	private List<EventAction> newRunning;
-	private List<EventAction> toRemove;
 	
 	public Event() {
 		// Initialize stuff
-		allEvents = new ArrayList<EventAction>();
-		pool = new ArrayList<EventAction>();
-		running = new ArrayList<EventAction>();
-		newRunning = new ArrayList<EventAction>();
+		allEvents = new ArrayList<>();
+		pool = new ArrayList<>();
+		running = new ArrayList<>();
 		sorted = false;
 	}
 	
@@ -30,7 +27,7 @@ public class Event {
 	}
 	
 	public void addActions(List<EventAction> events) {
-		events.forEach(event -> addAction(event));
+		events.stream().forEach(this::addAction);
 	}
 	
 	public void sort() {
@@ -41,8 +38,8 @@ public class Event {
 	public List<EventAction> getRunningItems(long elapsed) {
 		
 		// Clean the list of new running events
-		newRunning = new ArrayList<EventAction>();
-		toRemove = new ArrayList<EventAction>();
+		List<EventAction> toRemove = new ArrayList<>();
+		List<EventAction> newRunning = new ArrayList<>();
 		
 		// Sort the events in case they aren't
 		if(!sorted) {
@@ -86,12 +83,12 @@ public class Event {
 	}
 	
 	public boolean isDone() {
-		return (running.size()==0 && pool.size() ==0);
+		return (running.isEmpty() && pool.isEmpty());
 	}
 
 	public void setLoop(boolean loop) {
 		for(EventAction event : allEvents) {
-			event.setLoop(false);
+			event.setLoop(loop);
 		}
 	}
 
@@ -101,9 +98,8 @@ public class Event {
 		sorted = false;
 		
 		// Clean up the lists
-		pool = new ArrayList<EventAction>();
-		running = new ArrayList<EventAction>();
-		newRunning = new ArrayList<EventAction>();
+		pool = new ArrayList<>();
+		running = new ArrayList<>();
 		
 		// Copy events to the poll
 		pool.addAll(allEvents);

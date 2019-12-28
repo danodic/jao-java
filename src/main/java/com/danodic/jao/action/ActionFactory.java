@@ -49,8 +49,7 @@ public class ActionFactory {
 	}
 
 	private static void scanInitializers(Reflections reflections) {
-		List<Class<? extends IInitializer>> classes = new ArrayList<>(
-				reflections.getSubTypesOf(IInitializer.class));
+		List<Class<? extends IInitializer>> classes = new ArrayList<>(reflections.getSubTypesOf(IInitializer.class));
 		for (Class<? extends IInitializer> clazz : classes) {
 			if (clazz.isAnnotationPresent(Action.class)) {
 				for (Constructor<?> cons : clazz.getConstructors()) {
@@ -64,8 +63,7 @@ public class ActionFactory {
 	}
 
 	private static void scanActions(Reflections reflections) {
-		List<Class<? extends IAction>> classes = new ArrayList<>(
-				reflections.getSubTypesOf(IAction.class));
+		List<Class<? extends IAction>> classes = new ArrayList<>(reflections.getSubTypesOf(IAction.class));
 		for (Class<? extends IAction> clazz : classes) {
 			if (clazz.isAnnotationPresent(Action.class)) {
 				for (Constructor<?> cons : clazz.getConstructors()) {
@@ -160,6 +158,12 @@ public class ActionFactory {
 			}
 		}
 
+		// Throw an error in case the constructor was not found
+		if (defaultContructor == null) {
+			throw new CannotInstantiateJaoActionException(actionName,
+					new RuntimeException("No argument-free constructor was found for action."));
+		}
+
 		try {
 			// Get the action from the library and instantiate it
 			action = defaultContructor.newInstance();
@@ -235,6 +239,12 @@ public class ActionFactory {
 				defaultContructor = (Constructor<IInitializer>) constructor;
 				break;
 			}
+		}
+
+		// Throw an error in case the constructor was not found
+		if (defaultContructor == null) {
+			throw new CannotInstantiateJaoActionException(initializeName,
+					new RuntimeException("No argument-free constructor was found for initializer."));
 		}
 
 		try {
