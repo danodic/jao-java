@@ -97,10 +97,10 @@ public class JaoParser {
 			CannotFindJaoInitializerException, CannotFindJaoActionException {
 
 		// Parse the layers in the model extracted from the JSON
-		List<JaoLayer> layers = parseLayers(model.getLayers(), renderer);
+		Jao jao = new Jao();
+		List<JaoLayer> layers = parseLayers(jao, model.getLayers(), renderer);
 
 		// Populate the main Jao information and return it
-		Jao jao = new Jao();
 		jao.addLayers(layers);
 		return jao;
 	}
@@ -120,12 +120,12 @@ public class JaoParser {
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
 	 */
-	private static List<JaoLayer> parseLayers(List<LayerModel> layers, Class<? extends IRenderer> renderer)
+	private static List<JaoLayer> parseLayers(Jao jao, List<LayerModel> layers, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
 			CannotFindJaoInitializerException, CannotFindJaoActionException {
 		List<JaoLayer> layerInstances = new ArrayList<JaoLayer>();
 		for (LayerModel layer : layers)
-			layerInstances.add(parseLayer(layer, renderer));
+			layerInstances.add(parseLayer(jao, layer, renderer));
 		return layerInstances;
 	}
 
@@ -142,7 +142,7 @@ public class JaoParser {
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
 	 */
-	private static JaoLayer parseLayer(LayerModel layerModel, Class<? extends IRenderer> renderer)
+	private static JaoLayer parseLayer(Jao jao, LayerModel layerModel, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
 			CannotFindJaoInitializerException, CannotFindJaoActionException {
 		// Create the renderer and set the data type into it
@@ -150,7 +150,7 @@ public class JaoParser {
 		rendererImpl.setDataType(layerModel.getDataType());
 
 		// Instantiate the JAO layer and add the initializers and events to it
-		JaoLayer layer = new JaoLayer(rendererImpl);
+		JaoLayer layer = new JaoLayer(jao, rendererImpl);
 		layer.addInitializers(parseInitializers(layer, layerModel.getEvents()));
 		layer.addEvents(parseEvents(layer, layerModel.getEvents()));
 
