@@ -21,6 +21,7 @@ public class FolderExtractor implements IExtractor {
 
 	private String json;
 	private Map<String, byte[]> data;
+	private String rootFolder;
 
 	/**
 	 * @param filePath The name of the file to be loaded.
@@ -36,15 +37,16 @@ public class FolderExtractor implements IExtractor {
 
 		// Initialize data
 		folderPath = Paths.get(folder);
-		data = new HashMap<String, byte[]>();
+		data = new HashMap<>();
 		json = null;
+		rootFolder = folder;
 
 		// Check if the folder exists
-		if (Files.notExists(folderPath))
+		if (!folderPath.toFile().exists())
 			throw new CannotLoadJaoFileException(folder, new RuntimeException("Folder provided does not exists."));
 
 		// Check if this is not a directory
-		if (!Files.isDirectory(folderPath))
+		if (!folderPath.toFile().isDirectory())
 			throw new CannotLoadJaoFileException(folder, new RuntimeException("Path provided is not a folder."));
 
 		// Parse the folder and load the bytes in memory
@@ -68,25 +70,23 @@ public class FolderExtractor implements IExtractor {
 
 		// List files from the folder and iterate over them
 		for (File entry : new File(folder).listFiles()) {
-
-			// Check if this is a file or a directory
 			if (entry.isDirectory()) {
 				parseFolder(entry.getPath());
-				continue;
-			}
+			} else {
+				try {
+					// Check if this is the json file
+					if (entry.getName().equals("jao.json")) {
+						json = new String(Files.readAllBytes(Paths.get(entry.getPath())));
+						continue;
+					}
 
-			try {
-				// Check if this is the json file
-				if (entry.getName().equals("jao.json")) {
-					json = new String(Files.readAllBytes(Paths.get(entry.getPath())));
-					continue;
+					// Add file to the collection
+					String path = entry.toString().substring(rootFolder.length(), entry.toString().length());
+					data.put(path, Files.readAllBytes(Paths.get(entry.getPath())));
+
+				} catch (IOException e) {
+					throw new CannotLoadJaoFileContentException(entry.getPath(), e);
 				}
-
-				// Add file to the collection
-				data.put(entry.getPath(), Files.readAllBytes(Paths.get(entry.getPath())));
-
-			} catch (IOException e) {
-				throw new CannotLoadJaoFileContentException(entry.getPath(), e);
 			}
 		}
 	}

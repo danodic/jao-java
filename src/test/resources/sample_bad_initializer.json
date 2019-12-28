@@ -1,0 +1,41 @@
+{
+    "layers": [
+        {
+            "dataType": {
+                "type": "sprite",
+                "attributes": {
+                    "path": "jao.png"
+                }
+            },
+            "events": [
+                {
+                    "name": "initialize",
+                    "actions": [
+                        {
+                            "library": "jao.unittest",
+                            "name": "Opacity",
+                            "attribute": "0"
+                        }
+                    ]
+                },
+                {
+                    "name": "default",
+                    "actions": [
+                        {
+                            "library": "jao.unittest",
+                            "name": "BadAction",
+                            "when": "second 0",
+                            "attributes": {
+                                "start_opacity": "0",
+                                "end_opacity": "1",
+                                "duration": "seconds 1",
+                                "bounce": "true",
+                                "loop": "true"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -11,11 +11,13 @@ public class CannotLoadJaoFileException extends Exception {
 		this.exception = e;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("Could not load JAO file located at '%s'. Reason:\n%s", this.fileName,
 				this.exception.getMessage());
 	}
 	
+	@Override
 	public String getMessage() {
 		return toString();
 	}

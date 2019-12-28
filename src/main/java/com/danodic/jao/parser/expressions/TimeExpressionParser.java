@@ -8,6 +8,10 @@ import static com.danodic.jao.parser.expressions.ExpressionSupport.seconds;
 
 public class TimeExpressionParser {
 
+	private TimeExpressionParser() {
+
+	}
+
 	public static Long parseExpression(String expression) {
 
 		List<String> tokens;

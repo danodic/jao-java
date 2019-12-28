@@ -9,10 +9,12 @@ public class ContentFileDoesNotExistException extends Exception {
 		this.fileName = fileName;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("The path provided for the JAO file at '%s' is invalid.", this.fileName);
 	}
 
+	@Override
 	public String getMessage() {
 		return toString();
 	}

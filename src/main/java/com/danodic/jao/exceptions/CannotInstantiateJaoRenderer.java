@@ -9,10 +9,12 @@ public class CannotInstantiateJaoRenderer extends Exception {
 		this.exception = e;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("Could not instantiate the renderer class. Reason:\n%s", this.exception.getMessage());
 	}
 	
+	@Override
 	public String getMessage() {
 		return toString();
 	}

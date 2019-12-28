@@ -11,10 +11,12 @@ public class CannotFindJaoElementException extends Exception {
 		this.type = type;
 	}
 
+	@Override
 	public String toString() {
 		return String.format("Could not find any JAO %s named as '%s'", this.type, this.name);
 	}
 
+	@Override
 	public String getMessage() {
 		return toString();
 	}

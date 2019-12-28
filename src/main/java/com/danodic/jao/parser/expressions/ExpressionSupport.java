@@ -8,6 +8,10 @@ package com.danodic.jao.parser.expressions;
  */
 public class ExpressionSupport {
 
+	private ExpressionSupport() {
+		
+	}
+
 	/**
 	 * Will return the representation in long for a given amount of seconds in float
 	 * format.

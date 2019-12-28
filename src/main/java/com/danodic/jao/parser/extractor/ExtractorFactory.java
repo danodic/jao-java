@@ -1,6 +1,6 @@
 package com.danodic.jao.parser.extractor;
 
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.danodic.jao.exceptions.CannotLoadJaoFileContentException;
@@ -15,6 +15,10 @@ import com.danodic.jao.exceptions.UnknownJaoFileFormatExcepton;
  *
  */
 public class ExtractorFactory {
+
+	private ExtractorFactory() {
+
+	}
 
 	/**
 	 * Provides an instance of IExtractor according to known file types.
@@ -31,15 +35,15 @@ public class ExtractorFactory {
 	public static IExtractor getExtractor(String filename)
 			throws CannotLoadJaoFileException, CannotLoadJaoFileContentException, UnknownJaoFileFormatExcepton {
 
-		String lastName;
-
+		Path path = Paths.get(filename);
+		
 		// Check if the file provided is a folder
-		if (Files.isDirectory(Paths.get(filename))) {
+		if (path.toFile().isDirectory()) {
 			return new FolderExtractor(filename);
 		}
 
 		// Not a folder, check if we have a file extension
-		lastName = Paths.get(filename).getName(-1).toString();
+		String lastName = path.getName(path.getNameCount()-1).toString();
 
 		// Check if this is a known file format
 		if (lastName.toLowerCase().endsWith(".zip") || lastName.toLowerCase().endsWith(".jao")) {

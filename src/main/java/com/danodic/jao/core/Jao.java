@@ -18,7 +18,7 @@ public class Jao {
 	}
 
 	public Jao(float scaleFactor) {
-		layers = new ArrayList<JaoLayer>();
+		layers = new ArrayList<>();
 		this.scaleFactor = scaleFactor;
 	}
 

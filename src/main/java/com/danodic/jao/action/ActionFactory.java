@@ -28,8 +28,11 @@ public class ActionFactory {
 		private static final long serialVersionUID = 5319075828568574182L;
 	}
 
-	private static LinkedHashMap<String, ActionLibrary> actionLibrary = new LinkedHashMap<String, ActionLibrary>();
-	private static LinkedHashMap<String, InitializerLibrary> initializerLibrary = new LinkedHashMap<String, InitializerLibrary>();
+	private static LinkedHashMap<String, ActionLibrary> actionLibrary = new LinkedHashMap<>();
+	private static LinkedHashMap<String, InitializerLibrary> initializerLibrary = new LinkedHashMap<>();
+
+	private ActionFactory() {
+	}
 
 	/**
 	 * Will scan the classpath and look for classes annotated with @Action and that
@@ -42,11 +45,12 @@ public class ActionFactory {
 
 		scanInitializers(reflections);
 		scanActions(reflections);
-		
+
 	}
 
 	private static void scanInitializers(Reflections reflections) {
-		List<Class<? extends IInitializer>> classes = new ArrayList<Class<? extends IInitializer>>(reflections.getSubTypesOf(IInitializer.class));
+		List<Class<? extends IInitializer>> classes = new ArrayList<>(
+				reflections.getSubTypesOf(IInitializer.class));
 		for (Class<? extends IInitializer> clazz : classes) {
 			if (clazz.isAnnotationPresent(Action.class)) {
 				for (Constructor<?> cons : clazz.getConstructors()) {
@@ -60,7 +64,8 @@ public class ActionFactory {
 	}
 
 	private static void scanActions(Reflections reflections) {
-		List<Class<? extends IAction>> classes = new ArrayList<Class<? extends IAction>>(reflections.getSubTypesOf(IAction.class));
+		List<Class<? extends IAction>> classes = new ArrayList<>(
+				reflections.getSubTypesOf(IAction.class));
 		for (Class<? extends IAction> clazz : classes) {
 			if (clazz.isAnnotationPresent(Action.class)) {
 				for (Constructor<?> cons : clazz.getConstructors()) {
@@ -83,20 +88,20 @@ public class ActionFactory {
 	private static void registerAction(Class<? extends IAction> action) {
 		String actionName = action.getAnnotation(Action.class).name();
 		String libraryName = action.getAnnotation(Action.class).library();
-		
+
 		if (!actionLibrary.containsKey(libraryName))
 			actionLibrary.put(libraryName, new ActionLibrary());
-		
+
 		actionLibrary.get(libraryName).put(actionName, action);
 	}
 
 	private static void registerInitializer(Class<? extends IInitializer> initializer) {
 		String actionName = initializer.getAnnotation(Action.class).name();
 		String libraryName = initializer.getAnnotation(Action.class).library();
-		
+
 		if (!initializerLibrary.containsKey(libraryName))
 			initializerLibrary.put(libraryName, new InitializerLibrary());
-		
+
 		initializerLibrary.get(libraryName).put(actionName, initializer);
 	}
 
@@ -110,8 +115,8 @@ public class ActionFactory {
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 */
-	public static IAction getAction(String libraryName, String actionName) throws CannotInstantiateJaoActionException,
-			CannotFindJaoLibraryException, CannotFindJaoActionException {
+	public static IAction getAction(String libraryName, String actionName)
+			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
 		return getAction(libraryName, actionName, null);
 	}
 
@@ -124,16 +129,15 @@ public class ActionFactory {
 	 * @param actionName  Name of the action to be retrieved from the library.
 	 * @param model       The data of the action parsed from the Json file.
 	 * @return an instance of a class that implements IAction.
-	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate
-	 *                                              the initializer.
+	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate the
+	 *                                             initializer.
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoActionException
 	 */
 	@SuppressWarnings("unchecked")
 	public static IAction getAction(String libraryName, String actionName, ActionModel model)
-			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
-			CannotFindJaoActionException {
+			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
 		IAction action;
 		Constructor<IAction> defaultContructor;
 
@@ -141,10 +145,10 @@ public class ActionFactory {
 		defaultContructor = null;
 
 		// Handle errors
-		if(!actionLibrary.containsKey(libraryName)) {
+		if (!actionLibrary.containsKey(libraryName)) {
 			throw new CannotFindJaoLibraryException(libraryName);
 		}
-		if(!actionLibrary.get(libraryName).containsKey(actionName)) {
+		if (!actionLibrary.get(libraryName).containsKey(actionName)) {
 			throw new CannotFindJaoActionException(actionName);
 		}
 
@@ -174,7 +178,7 @@ public class ActionFactory {
 		}
 
 	}
-	
+
 	/**
 	 * Will find an initializer in the initializer library and will return an
 	 * instance of it.
@@ -197,12 +201,13 @@ public class ActionFactory {
 	 * instance of it. This instance will be pre-populated with the data provided in
 	 * the ActionModel instance passed as argument.
 	 * 
-	 * @param libraryName Name of the library to get the initializer from.
-	 * @param initializeName  Name of the initializer to be retrieved from the library.
-	 * @param model       The data of the action parsed from the Json file.
+	 * @param libraryName    Name of the library to get the initializer from.
+	 * @param initializeName Name of the initializer to be retrieved from the
+	 *                       library.
+	 * @param model          The data of the action parsed from the Json file.
 	 * @return an instance of a class that implements IInitializer.
-	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate
-	 *                                              the initializer.
+	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate the
+	 *                                             initializer.
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoInitializerException
 	 */
@@ -217,10 +222,10 @@ public class ActionFactory {
 		defaultContructor = null;
 
 		// Handle errors
-		if(!initializerLibrary.containsKey(libraryName)) {
+		if (!initializerLibrary.containsKey(libraryName)) {
 			throw new CannotFindJaoLibraryException(libraryName);
 		}
-		if(!initializerLibrary.get(libraryName).containsKey(initializeName)) {
+		if (!initializerLibrary.get(libraryName).containsKey(initializeName)) {
 			throw new CannotFindJaoInitializerException(initializeName);
 		}
 
