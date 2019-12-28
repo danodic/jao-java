@@ -1,5 +1,6 @@
 package com.danodic.jao.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ActionModel {
@@ -9,6 +10,10 @@ public class ActionModel {
 	private String when;
 	private String attribute;
 	private Map<String, String> attributes;
+
+	public ActionModel() {
+		attributes = new HashMap<>();
+	}
 
 	public String getLibrary() {
 		return library;
