@@ -13,7 +13,7 @@ public class CannotInstantiateJaoActionException extends Exception {
 
 	@Override
 	public String toString() {
-		return String.format("Could not instantiate the event '%s'. Reason:\n%s", this.eventName,
+		return String.format("Could not instantiate the event '%s'. Reason:%n%s", this.eventName,
 				this.exception.getMessage());
 	}
 	
