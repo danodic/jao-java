@@ -32,5 +32,9 @@ public class BadAction implements IAction {
     @Override
     public void setLoop(boolean loop) {
     }
+
+    public boolean isLoop() {
+        return false;
+    }
     
 }

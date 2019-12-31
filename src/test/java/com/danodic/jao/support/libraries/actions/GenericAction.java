@@ -57,4 +57,8 @@ public class GenericAction implements IAction {
         return loop;
     }
 
+    public ActionModel getModel() {
+        return model;
+    }
+
 }

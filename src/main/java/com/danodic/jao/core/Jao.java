@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.danodic.jao.time.IClock;
+import com.danodic.jao.time.StandardClock;
+
 /**
  * This is the main class for the Jao library. The instance of this class is
  * provided by parsing a JSON file using the JaoParser class.
@@ -34,16 +37,20 @@ public class Jao {
 	private List<JaoLayer> layers;
 	private Long startTime;
 	private Long elapsed;
-	private Long frameTime;
 	private float scaleFactor;
+	
+	private Long lastFrameTime;
+	private Long lastFrameDelta;
+	private Long newFrameTime;
+
+	private IClock clock;
 
 	public Jao() {
-		this(1.0f);
-	}
-
-	public Jao(float scaleFactor) {
+		clock = new StandardClock();
 		layers = new ArrayList<>();
-		this.scaleFactor = scaleFactor;
+		lastFrameTime = 0L;
+		elapsed = 0L;
+		this.scaleFactor = 1.0f;
 	}
 
 	/**
@@ -104,21 +111,23 @@ public class Jao {
 	 */
 	private void updateElapsed() {
 		if (startTime == null) {
-			startTime = Instant.now().toEpochMilli();
-			frameTime = startTime;
+			startTime = clock.now();
+			lastFrameTime = startTime;
+			lastFrameDelta = 0L;
 		} else {
-			frameTime = Instant.now().toEpochMilli();
+			newFrameTime = clock.now();
+			lastFrameDelta = newFrameTime - lastFrameTime;
+			lastFrameTime = newFrameTime;
 		}
-		elapsed = frameTime - startTime;
+		elapsed = lastFrameTime - startTime;
 	}
 
 	/**
-	 * Returns how much time has run since the current event started running.
+	 * Returns how much time has run since the last render() call.
 	 * 
 	 * @return The elapsed time.
 	 */
 	public long getElapsed() {
-		updateElapsed();
 		return elapsed;
 	}
 
@@ -170,8 +179,15 @@ public class Jao {
 	 * 
 	 * @return The frame time in miliseconds.
 	 */
-	public Long getFrameTime() {
-		return frameTime;
+	public Long getLastFrameDelta() {
+		return lastFrameDelta;
+	}
+
+	/**
+	 * Get the time in milliseconds in which the last frame was triggered.
+	 */
+	public Long getLastFrameTime() {
+		return lastFrameTime;
 	}
 
 	/**
@@ -185,6 +201,25 @@ public class Jao {
 	 */
 	public void setEvent(String eventName) {
 		layers.forEach(layer -> layer.setEvent(eventName));
+	}
+
+	/**
+	 * Will return the current clock in use by the Jao animation.
+	 * 
+	 * @return The instance of the clock being used at the moment.
+	 */
+	public IClock getClock() {
+		return clock;
+	}
+
+	/**
+	 * Set the clock to be used by the Jao animation. Setting a custom clock allows
+	 * the user to manipulate time as necessary.
+	 * 
+	 * @param clock An instance of IClock.
+	 */
+	public void setClock(IClock clock) {
+		this.clock = clock;
 	}
 
 }

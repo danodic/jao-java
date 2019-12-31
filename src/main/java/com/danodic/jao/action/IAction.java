@@ -13,4 +13,6 @@ public interface IAction {
 	public boolean isDone();
 
 	public void setLoop(boolean loop);
+
+	public boolean isLoop();
 }

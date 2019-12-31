@@ -11,6 +11,7 @@ import com.danodic.jao.event.EventAction;
 import com.danodic.jao.event.InitializerEvent;
 import com.danodic.jao.exceptions.JaoEventNotFoundException;
 import com.danodic.jao.renderer.IRenderer;
+import com.danodic.jao.time.IClock;
 
 /**
  * The JaoLayer class will hold all events and initializers from a given layer
@@ -198,7 +199,8 @@ public class JaoLayer {
 			action.run();
 		}
 		renderer.render(this);
-	}
+		currentEvent.cleanDone();
+	}	
 
 	/**
 	 * Add a single event in the list of events for this layer.
@@ -208,6 +210,8 @@ public class JaoLayer {
 	 */
 	public void addEvent(String eventName, Event event) {
 		events.put(eventName, event);
+		if(eventName == "default")
+			currentEvent = event;
 	}
 
 	/**
@@ -246,11 +250,12 @@ public class JaoLayer {
 	 * @return The last frame time measured.
 	 */
 	public Long getFrameTime() {
-		return jao.getFrameTime();
+		return jao.getLastFrameTime();
 	}
 
 	/**
 	 * Will define if this layer is expected to loop or not.
+	 * 
 	 * @param loop Whether the layer should loop or not.
 	 */
 	public void setLoop(boolean loop) {
@@ -270,4 +275,12 @@ public class JaoLayer {
 		initialize();
 	}
 
+	/**
+	 * Returns the instance of clock currently being used by the main animation.
+	 * 
+	 * @return An instance of IClock being used by the main Jao instance.
+	 */
+	public IClock getClock() {
+		return jao.getClock();
+	}
 }
