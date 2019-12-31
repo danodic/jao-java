@@ -1,5 +1,6 @@
 package com.danodic.jao.core;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,10 +103,12 @@ public class Jao {
 	 * Updates the elapsed time since the start of the current event.
 	 */
 	private void updateElapsed() {
-		if (startTime == null)
-			startTime = System.currentTimeMillis();
-
-		frameTime = System.currentTimeMillis();
+		if (startTime == null) {
+			startTime = Instant.now().toEpochMilli();
+			frameTime = startTime;
+		} else {
+			frameTime = Instant.now().toEpochMilli();
+		}
 		elapsed = frameTime - startTime;
 	}
 

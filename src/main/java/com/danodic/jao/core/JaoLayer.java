@@ -249,6 +249,10 @@ public class JaoLayer {
 		return jao.getFrameTime();
 	}
 
+	/**
+	 * Will define if this layer is expected to loop or not.
+	 * @param loop Whether the layer should loop or not.
+	 */
 	public void setLoop(boolean loop) {
 		if (currentEvent != null)
 			currentEvent.setLoop(loop);
