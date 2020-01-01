@@ -26,6 +26,8 @@ hs_err_pid*
 .settings
 .vscode
 .classpath
+.sonar_lock.txt
+Download errors.txt
 
 target
 test-output

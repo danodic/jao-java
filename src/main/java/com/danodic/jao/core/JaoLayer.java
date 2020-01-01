@@ -41,6 +41,8 @@ public class JaoLayer {
 	private Event currentEvent;
 	private LayerParameters parameters;
 
+	private static final String DEFAULT_EVENT_NAME = "default";
+
 	public JaoLayer(Jao jao, IRenderer rendererImpl) {
 		this.jao = jao;
 
@@ -155,8 +157,8 @@ public class JaoLayer {
 	 */
 	public void addEvents(Map<String, Event> events) {
 		this.events.putAll(events);
-		if (this.events.containsKey("default"))
-			this.currentEvent = this.events.get("default");
+		if (this.events.containsKey(DEFAULT_EVENT_NAME))
+			this.currentEvent = this.events.get(DEFAULT_EVENT_NAME);
 	}
 
 	/**
@@ -210,7 +212,7 @@ public class JaoLayer {
 	 */
 	public void addEvent(String eventName, Event event) {
 		events.put(eventName, event);
-		if(eventName == "default")
+		if(eventName.equals(DEFAULT_EVENT_NAME))
 			currentEvent = event;
 	}
 

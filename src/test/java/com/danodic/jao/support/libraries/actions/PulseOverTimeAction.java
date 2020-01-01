@@ -35,4 +35,5 @@ public class PulseOverTimeAction extends GenericAction {
             duration = TimeExpressionParser.parseExpression(super.getModel().getAttributes().get("duration"));
         }
     }
+
 }

@@ -46,6 +46,7 @@ public class GenericAction implements IAction {
 
     @Override
     public void setLoop(boolean loop) {
+        this.loop = loop;
         outStream.println("Set loop of class " + this.getClass().getName() + " to " + loop);
     }
 

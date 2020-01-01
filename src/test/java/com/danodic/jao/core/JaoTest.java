@@ -19,11 +19,9 @@ import com.danodic.jao.support.Defaults;
 import com.danodic.jao.support.clocks.TimeLordClock;
 import com.danodic.jao.support.libraries.actions.PulseOverTimeAction;
 import com.danodic.jao.support.renderers.TestRenderer;
-import com.danodic.jao.time.IClock;
 import com.danodic.jao.time.StandardClock;
 
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class JaoTest {
@@ -174,7 +172,7 @@ public class JaoTest {
     }
 
     @Test 
-    public void prepareToFinish() throws CannotFindJaoLibraryException, CannotFindJaoInitializerException,
+    public void testPrepareToFinish() throws CannotFindJaoLibraryException, CannotFindJaoInitializerException,
             CannotFindJaoActionException, CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer {
         
         // We need a fresh instance for this test
@@ -193,9 +191,11 @@ public class JaoTest {
             event.addAction(eAction);
         }
 
+        jao.addLayers(layers);
+
         // Make sure all events have loop == true
         for(JaoLayer layer : layers) {
-            for(EventAction eAction : layer.getEvent().getPool()) {
+            for(EventAction eAction : layer.getEvent().getAllActionEvents()) {
                 eAction.getAction().setLoop(true);
             }
         }
@@ -203,7 +203,7 @@ public class JaoTest {
         // This is supposed to set all actions to loop == false in the currentEvent.
         jao.prepareToFinish();
         for(JaoLayer layer : layers) {
-            for(EventAction eAction : layer.getEvent().getPool()) {
+            for(EventAction eAction : layer.getEvent().getAllActionEvents()) {
                 assert eAction.getAction().isLoop() == false;
             }
         }

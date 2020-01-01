@@ -20,9 +20,23 @@ public class TimeExpressionParserTest {
             };
     }
 
+    
     @Test(dataProvider = "provideTimeExpressions")
     public void testTimeExpression(String expression, long expected) {
         assert TimeExpressionParser.parseExpression(expression) == expected;
+    }
+    
+    @DataProvider
+    public Object [][] provideInvalidTimeExpressions() {
+        return new Object[][] {
+                new Object[] {"secondss 1"},
+                new Object[] {"sec 1"},
+            };
+    }
+
+    @Test(dataProvider = "provideInvalidTimeExpressions")
+    public void testInvalidTimeExpression(String expression) {
+        assert TimeExpressionParser.parseExpression(expression) == 0L;
     }
     
 }

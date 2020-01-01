@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * An event is a collection of EventAction items that hold an Action each. The
+ * Event class manages the execution of the actions.
+ */
 public class Event {
 
 	private boolean sorted;
@@ -13,6 +17,8 @@ public class Event {
 	private List<EventAction> pool;
 	private List<EventAction> running;
 
+	private Long startTime;
+
 	public Event() {
 		// Initialize stuff
 		allEvents = new ArrayList<>();
@@ -20,24 +26,40 @@ public class Event {
 		running = new ArrayList<>();
 		sorted = false;
 		hasStarted = false;
+		startTime = 0L;
 	}
 
+	/**
+	 * Will add a new action to the list of actions in this event.
+	 * 
+	 * @param event An instance of EventAction.
+	 */
 	public void addAction(EventAction event) {
 		sorted = false;
 		allEvents.add(event);
 		pool.add(event);
 	}
 
+	/**
+	 * Will append a list of actions to the existing list of actions in this event.
+	 * 
+	 * @param events A list of EventAction instances.
+	 */
 	public void addActions(List<EventAction> events) {
 		events.stream().forEach(this::addAction);
 	}
 
-	public void sort() {
-		sorted = true;
-		Collections.sort(pool);
-	}
-
+	/**
+	 * Will return the list of EventAction instances currently being executed.
+	 * 
+	 * @param elapsed How much time has elapsed since the beginning of the
+	 *                execution.
+	 * @return A list of EventAction instances.
+	 */
 	public List<EventAction> getRunningItems(long elapsed) {
+
+		if(startTime == null)
+			startTime = elapsed;
 
 		hasStarted = true;
 
@@ -54,7 +76,7 @@ public class Event {
 		for (EventAction event : pool) {
 
 			// Check if it is time to run the event
-			if (event.getWhen() <= elapsed) {
+			if (startTime + event.getWhen() <= elapsed) {
 				newRunning.add(event);
 				continue;
 			}
@@ -73,6 +95,10 @@ public class Event {
 		return running;
 	}
 
+	/**
+	 * Removes all actions marked as done from the list of events that are currently
+	 * running.
+	 */
 	public void cleanDone() {
 
 		List<EventAction> toRemove = new ArrayList<>();
@@ -91,16 +117,31 @@ public class Event {
 
 	}
 
+	/**
+	 * Will check if there are items running and if there are still items left in
+	 * the pool to be executed. Also, it will only return true in case it has been
+	 * executed at least once.
+	 */
 	public boolean isDone() {
 		return (running.isEmpty() && pool.isEmpty() && hasStarted);
 	}
 
+	/**
+	 * Will tell all actions wheter to loop or not.
+	 * 
+	 * @param loop Wheter actions should loop or not.
+	 */
 	public void setLoop(boolean loop) {
 		for (EventAction event : allEvents) {
 			event.setLoop(loop);
 		}
 	}
 
+	/**
+	 * Will feed the execution pool with all actions to be executed and then will
+	 * clean up the list of events being executed. Then, it will invoke reset() on
+	 * each action in this event.
+	 */
 	public void reset() {
 
 		// Mark to be sorted again
@@ -117,15 +158,18 @@ public class Event {
 		for (EventAction event : allEvents) {
 			event.reset();
 		}
-	}
 
+		startTime = null;
+		hasStarted = false;
+	}
 
 	/**
 	 * Will return the list of all EventActions that are going to run got this
 	 * event.
+	 * 
 	 * @return A list of EventAction instances.
 	 */
-	public List<EventAction> getPool() {
+	public List<EventAction> getAllActionEvents() {
 		return allEvents;
 	}
 
