@@ -10,6 +10,7 @@ public class TimeLordClock implements IClock {
 
     private long currentTime;
     private long delta;
+    private long lastFrameTime;
 
     public TimeLordClock() {
         currentTime = 0L;
@@ -22,21 +23,40 @@ public class TimeLordClock implements IClock {
     }
 
     /**
-     * Return the time between the last two frames.
-     * 
-     * @return The time between the last two frames.
-     */
-    public long getTimeDelta() {
-        return delta;
-    }
-
-    /**
      * Updates the time with the given time value and updates the delta.
      */
     public long setTime(long time) {
         delta = time - currentTime;
         currentTime = time;
+        lastFrameTime = time;
         return currentTime;
+    }
+
+    /**
+     * Just reset everything back to zero.
+     */
+    @Override
+    public void reset() {
+        currentTime = 0L;
+        delta = 0L;
+    }
+
+    /**
+     * The last time the frame was changed.
+     */
+    @Override
+    public long getLastFrameTime() {
+        return lastFrameTime;
+    }
+
+    /**
+     * Return the time between the last two frames.
+     * 
+     * @return The time between the last two frames.
+     */
+    @Override
+    public long getLastFrameDelta() {
+        return delta;
     }
 
 }

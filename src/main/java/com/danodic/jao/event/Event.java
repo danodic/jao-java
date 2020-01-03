@@ -17,8 +17,6 @@ public class Event {
 	private List<EventAction> pool;
 	private List<EventAction> running;
 
-	private Long startTime;
-
 	public Event() {
 		// Initialize stuff
 		allEvents = new ArrayList<>();
@@ -26,7 +24,6 @@ public class Event {
 		running = new ArrayList<>();
 		sorted = false;
 		hasStarted = false;
-		startTime = 0L;
 	}
 
 	/**
@@ -58,9 +55,6 @@ public class Event {
 	 */
 	public List<EventAction> getRunningItems(long elapsed) {
 
-		if(startTime == null)
-			startTime = elapsed;
-
 		hasStarted = true;
 
 		// Clean the list of new running events
@@ -76,7 +70,7 @@ public class Event {
 		for (EventAction event : pool) {
 
 			// Check if it is time to run the event
-			if (startTime + event.getWhen() <= elapsed) {
+			if (event.getWhen() <= elapsed) {
 				newRunning.add(event);
 				continue;
 			}
@@ -159,7 +153,6 @@ public class Event {
 			event.reset();
 		}
 
-		startTime = null;
 		hasStarted = false;
 	}
 

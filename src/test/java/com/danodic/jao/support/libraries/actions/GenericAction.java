@@ -36,6 +36,7 @@ public class GenericAction implements IAction {
 
     @Override
     public void reset() {
+        done = false;
         outStream.println("Resetting " + this.getClass().getName());
     }
 

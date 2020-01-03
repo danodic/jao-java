@@ -218,12 +218,19 @@ public class EventTest {
         assert jao.isDone();
         assert event.getRunningItems(tardis.now()).size() == 0;
 
+        jao.reset();
         event.reset();
+        tardis.reset();
         assert !jao.isDone();
 
-        tardis.setTime(7000L);
         jao.render();
         assert event.getRunningItems(tardis.now()).contains(eAction1);
+        assert !event.getRunningItems(tardis.now()).contains(eAction2);
+
+        tardis.setTime(4000L);
+        jao.render();
+        assert !event.getRunningItems(tardis.now()).contains(eAction1);
+        assert event.getRunningItems(tardis.now()).contains(eAction2);
 
     }
 

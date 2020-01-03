@@ -34,22 +34,16 @@ import com.danodic.jao.time.StandardClock;
 public class Jao {
 
 	private List<JaoLayer> layers;
-	private Long startTime;
 	private Long elapsed;
 	private float scaleFactor;
-	
-	private Long lastFrameTime;
-	private Long lastFrameDelta;
-	private Long newFrameTime;
 
 	private IClock clock;
 
 	public Jao() {
 		clock = new StandardClock();
 		layers = new ArrayList<>();
-		lastFrameTime = 0L;
 		elapsed = 0L;
-		this.scaleFactor = 1.0f;
+		scaleFactor = 1.0f;
 	}
 
 	/**
@@ -90,7 +84,8 @@ public class Jao {
 	public void reset() {
 		for (JaoLayer layer : layers)
 			layer.reset();
-		startTime = null;
+		clock.reset();
+		elapsed = 0L;
 	}
 
 	/**
@@ -109,16 +104,7 @@ public class Jao {
 	 * Updates the elapsed time since the start of the current event.
 	 */
 	private void updateElapsed() {
-		if (startTime == null) {
-			startTime = clock.now();
-			lastFrameTime = startTime;
-			lastFrameDelta = 0L;
-		} else {
-			newFrameTime = clock.now();
-			lastFrameDelta = newFrameTime - lastFrameTime;
-			lastFrameTime = newFrameTime;
-		}
-		elapsed = lastFrameTime - startTime;
+		elapsed = clock.now();
 	}
 
 	/**
@@ -179,14 +165,14 @@ public class Jao {
 	 * @return The frame time in miliseconds.
 	 */
 	public Long getLastFrameDelta() {
-		return lastFrameDelta;
+		return clock.getLastFrameDelta();
 	}
 
 	/**
 	 * Get the time in milliseconds in which the last frame was triggered.
 	 */
 	public Long getLastFrameTime() {
-		return lastFrameTime;
+		return clock.getLastFrameTime();
 	}
 
 	/**
