@@ -167,8 +167,10 @@ public class JaoLayer {
 	 */
 	public void setEventAndReset(String eventName) {
 		setEvent(eventName);
-		if (currentEvent != null)
+		initialize();
+		if (currentEvent != null) {
 			currentEvent.reset();
+		}
 	}
 
 	/**

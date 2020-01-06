@@ -6,13 +6,8 @@ import com.danodic.jao.core.JaoLayer;
 @Action(library = "jao.unittest", name = "RunOnceAction")
 public class RunOnceAction extends GenericAction {
 
-    private long duration;
-    private long when;
-
     public RunOnceAction() {
         super();
-        duration = 0l;
-        when = 0l;
     }
 
     @Override

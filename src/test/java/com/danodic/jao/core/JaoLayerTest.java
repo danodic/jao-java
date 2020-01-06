@@ -112,6 +112,60 @@ public class JaoLayerTest {
     }
 
     /**
+     * Must reset everything for the event that has been requested.
+     */
+    @Test
+    public void testSetEventAndReset() {
+        JaoLayer layer = new JaoLayer(jao, rendererImpl);
+        Event event = new Event();
+
+        // Setup the action
+        EventAction aEvent;
+        RunOnceAction action1 = new RunOnceAction();
+        RunOnceAction action2 = new RunOnceAction();
+        aEvent = new EventAction(layer, action1, 0L);
+        event.addAction(aEvent);
+        aEvent = new EventAction(layer, action2, 1000L);
+        event.addAction(aEvent);
+
+        // Setup the initializers
+        InitializerEvent iEvent = new InitializerEvent();
+        List<RunCountInitializer> initializers = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            initializers.add(new RunCountInitializer());
+        }
+        iEvent.addAll(initializers);
+
+        // Setup the layer
+        layer.addInitializers(iEvent);
+        layer.addEvent("sample_event", event);
+        layer.setEvent("sample_event");
+
+        // Make everything done
+        layer.render(4000L);
+
+        // Now, check that everything has run
+        for(RunCountInitializer initializer : initializers)
+            assert initializer.getRunCount() == 1;
+        assert layer.isDone();
+        assert action1.isDone();
+        assert action2.isDone();
+
+        // Set the current event as null
+        layer.setEvent("invalid_event");
+        assert layer.getEvent() == null;
+
+        // Run the reset and check if reset has been invoked
+        layer.setEventAndReset("sample_event");
+        for(RunCountInitializer initializer : initializers)
+            assert initializer.getRunCount() == 2;
+        assert !layer.isDone();
+        assert !action1.isDone();
+        assert !action2.isDone();
+
+    }
+
+    /**
      * Just check if an instance of LayerParamaters is returned.
      */
     @Test
@@ -260,10 +314,6 @@ public class JaoLayerTest {
         layer.addEvents(events);
         assert layer.hasEvent("event1");
         assert layer.hasEvent("event2");
-    }
-
-    public void testSetEventAndReset() {
-
     }
 
     /**
