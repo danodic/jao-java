@@ -115,11 +115,9 @@ public class JaoLayer {
 	 *                                   layer.
 	 */
 	public Event getEvent(String eventName) throws JaoEventNotFoundException {
-		try {
-			return events.get(eventName);
-		} catch (NullPointerException e) {
+		if(!events.containsKey(eventName))
 			throw new JaoEventNotFoundException(eventName);
-		}
+		return events.get(eventName);
 	}
 
 	/**
@@ -251,7 +249,7 @@ public class JaoLayer {
 	 * 
 	 * @return The last frame time measured.
 	 */
-	public Long getFrameTime() {
+	public Long getLastFrameTime() {
 		return jao.getLastFrameTime();
 	}
 

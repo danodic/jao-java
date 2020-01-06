@@ -3,6 +3,7 @@ package com.danodic.jao.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,16 +82,13 @@ public class JaoTest {
         TimeLordClock theTimeAndSpaceParadox = new TimeLordClock();
         jao.setClock(theTimeAndSpaceParadox);
         
-        jao.render();
-        assert jao.getLastFrameTime() == 0L;
-
-        theTimeAndSpaceParadox.setTime(3000L);
-        jao.render();
-
         theTimeAndSpaceParadox.setTime(6000L);
+        Long before = Instant.now().toEpochMilli();
         jao.render();
+        Long after = Instant.now().toEpochMilli();
 
-        assert jao.getLastFrameTime() == 6000L;
+        assert before <= jao.getLastFrameTime();
+        assert jao.getLastFrameTime() <= after;
     }
 
     @Test
@@ -169,6 +167,24 @@ public class JaoTest {
         jao.render();
         assert jao.isDone() == true;
 
+    }
+
+    @Test 
+    public void testRenderEmptyLayer() throws CannotFindJaoLibraryException, CannotFindJaoInitializerException,
+            CannotFindJaoActionException, CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer {
+        
+        // We need a fresh instance for this test
+        Jao jao = new Jao();
+
+        // Generate a bunch of mock layers and events into defaultEvent
+        List<JaoLayer> layers = new ArrayList<>();
+        for(int i=0; i<10; i++) {
+            JaoLayer layer = new JaoLayer(jao, rendererImpl);
+            layers.add(layer);
+        }
+
+        jao.addLayers(layers);
+        jao.render();
     }
 
     @Test 

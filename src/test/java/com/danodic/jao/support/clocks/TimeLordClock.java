@@ -1,5 +1,7 @@
 package com.danodic.jao.support.clocks;
 
+import java.time.Instant;
+
 import com.danodic.jao.time.IClock;
 
 /**
@@ -28,7 +30,7 @@ public class TimeLordClock implements IClock {
     public long setTime(long time) {
         delta = time - currentTime;
         currentTime = time;
-        lastFrameTime = time;
+        lastFrameTime = Instant.now().toEpochMilli();
         return currentTime;
     }
 

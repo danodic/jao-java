@@ -3,10 +3,6 @@ package com.danodic.jao.extractor;
 import com.danodic.jao.exceptions.CannotLoadJaoFileContentException;
 import com.danodic.jao.exceptions.CannotLoadJaoFileException;
 import com.danodic.jao.exceptions.UnknownJaoFileFormatExcepton;
-import com.danodic.jao.parser.extractor.ExtractorFactory;
-import com.danodic.jao.parser.extractor.FolderExtractor;
-import com.danodic.jao.parser.extractor.IExtractor;
-import com.danodic.jao.parser.extractor.ZipExtractor;
 import com.danodic.jao.support.Defaults;
 
 import org.testng.annotations.DataProvider;

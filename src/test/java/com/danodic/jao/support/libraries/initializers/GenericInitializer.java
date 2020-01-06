@@ -12,6 +12,8 @@ public class GenericInitializer implements IInitializer {
     private PrintStream outStream = Defaults.defaultPrintStream;
     private ActionModel model;
 
+    private boolean done = false;
+
     @Override
     public void run(JaoLayer layer) {
         outStream.println(this.getClass().getName() + " Class Initializer Run.\nEntries:\n");
@@ -20,6 +22,7 @@ public class GenericInitializer implements IInitializer {
         } else {
             model.getAttributes().forEach((key, value) -> outStream.println(key + ":" + value));
         }
+        done = true;
     }
 
     @Override
@@ -33,6 +36,14 @@ public class GenericInitializer implements IInitializer {
 
     public void setOutStream(PrintStream outStream) {
         this.outStream = outStream;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
     
 }

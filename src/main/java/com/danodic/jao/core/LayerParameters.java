@@ -1,50 +1,54 @@
 package com.danodic.jao.core;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+/**
+ * This is just a hash map with some custom methods to make it more practical to
+ * use. This hash map is used to holde the parameters of a given layer.
+ */
 @SuppressWarnings("serial")
-public class LayerParameters extends HashMap<String, Object>{
-	
-	public void setParameter(String paramName, Object parameter) {
-		put(paramName, parameter);
-	}
-	
+public class LayerParameters extends HashMap<String, Object> {
+
+	/**
+	 * Will return the value of a given parameter and will cast it to String.
+	 */
 	public String getAsString(String paramName) {
-		return (String) get(paramName);
+		return (String) (containsKey(paramName) ? get(paramName) : "");
 	}
-	
+
+	/**
+	 * Will return the value of a given parameter and will cast it to Integer.
+	 */
 	public Integer getAsInteger(String paramName) {
-		return (Integer) get(paramName);
+		return (Integer) (containsKey(paramName) ? get(paramName) : 0);
 	}
-	
+
+	/**
+	 * Will return the value of a given parameter and will cast it to Long.
+	 */
 	public Long getAsLong(String paramName) {
-		return (Long) get(paramName);
+		return (Long) (containsKey(paramName) ? get(paramName) : 0l);
 	}
-	
+
+	/**
+	 * Will return the value of a given parameter and will cast it to Float.
+	 */
 	public Float getAsFloat(String paramName) {
-		return (Float) (containsKey(paramName)? get(paramName) : 1f);
+		return (Float) (containsKey(paramName) ? get(paramName) : 0f);
 	}
-	
+
+	/**
+	 * Will return the value of a given parameter and will cast it to Double.
+	 */
 	public Double getAsDouble(String paramName) {
-		return (Double) get(paramName);
+		return (Double) (containsKey(paramName) ? get(paramName) : 0d);
 	}
-	
-	public Double getAsBoolean(String paramName) {
-		return (Double) get(paramName);
-	}
-	
-	public List<?> getAsList(String paramName) {
-		return (List<?>) get(paramName);
-	}
-	
-	public Map<?,?> getAsMap(String paramName) {
-		return (Map<?,?>) get(paramName);
-	}
-	
-	public Object getAsObject(String paramName) {
-		return (Object) get(paramName);
+
+	/**
+	 * Will return the value of a given parameter and will cast it to Boolean.
+	 */
+	public Boolean getAsBoolean(String paramName) {
+		return (Boolean) (containsKey(paramName) ? get(paramName) : false);
 	}
 
 }
