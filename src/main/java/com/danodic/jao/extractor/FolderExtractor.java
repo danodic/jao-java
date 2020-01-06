@@ -82,6 +82,7 @@ public class FolderExtractor implements IExtractor {
 
 					// Add file to the collection
 					String path = entry.toString().substring(rootFolder.length(), entry.toString().length());
+					path = path.replaceAll("[\\\\]", "/");
 					data.put(path, Files.readAllBytes(Paths.get(entry.getPath())));
 
 				} catch (IOException e) {
