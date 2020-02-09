@@ -14,6 +14,7 @@ import com.danodic.jao.exceptions.CannotFindJaoInitializerException;
 import com.danodic.jao.exceptions.CannotFindJaoLibraryException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoActionException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoRenderer;
+import com.danodic.jao.exceptions.ContentFileDoesNotExistException;
 import com.danodic.jao.parser.JaoParser;
 import com.danodic.jao.renderer.IRenderer;
 import com.danodic.jao.support.Defaults;
@@ -33,9 +34,9 @@ public class JaoTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setup() throws IOException, CannotFindJaoLibraryException, CannotFindJaoInitializerException,
-            CannotFindJaoActionException, CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer {
+            CannotFindJaoActionException, CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, ContentFileDoesNotExistException {
         json = new String(Files.readAllBytes(Paths.get(Defaults.SAMPLE_JSON)));
-        jao = JaoParser.parseJson(json, TestRenderer.class);
+        jao = JaoParser.parseJson(json, null, TestRenderer.class);
         rendererImpl = new TestRenderer();
     }
 

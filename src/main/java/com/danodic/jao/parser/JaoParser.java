@@ -19,6 +19,8 @@ import com.danodic.jao.exceptions.CannotFindJaoInitializerException;
 import com.danodic.jao.exceptions.CannotFindJaoLibraryException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoActionException;
 import com.danodic.jao.exceptions.CannotInstantiateJaoRenderer;
+import com.danodic.jao.exceptions.ContentFileDoesNotExistException;
+import com.danodic.jao.extractor.IExtractor;
 import com.danodic.jao.model.ActionModel;
 import com.danodic.jao.model.EventModel;
 import com.danodic.jao.model.JaoModel;
@@ -56,10 +58,11 @@ public class JaoParser {
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
+	 * @throws ContentFileDoesNotExistException 
 	 */
-	public static Jao parseJson(String json, Class<? extends IRenderer> renderer)
+	public static Jao parseJson(String json, IExtractor extractor, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException, CannotFindJaoActionException {
+			CannotFindJaoInitializerException, CannotFindJaoActionException, ContentFileDoesNotExistException {
 
 		// Get the Jao Model
 		JaoModel model = deserializeJson(json);
@@ -68,7 +71,7 @@ public class JaoParser {
 		ActionFactory.initializeFactory();
 
 		// Parse the model and return the instance
-		return parseJaoModel(model, renderer);
+		return parseJaoModel(model, extractor, renderer);
 	}
 
 	/**
@@ -95,13 +98,16 @@ public class JaoParser {
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
+	 * @throws ContentFileDoesNotExistException 
 	 */
-	private static Jao parseJaoModel(JaoModel model, Class<? extends IRenderer> renderer)
+	private static Jao parseJaoModel(JaoModel model, IExtractor extractor, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException, CannotFindJaoActionException {
+			CannotFindJaoInitializerException, CannotFindJaoActionException, ContentFileDoesNotExistException {
 
 		// Parse the layers in the model extracted from the JSON
 		Jao jao = new Jao();
+		jao.setExtractor(extractor);
+		
 		List<JaoLayer> layers = parseLayers(jao, model.getLayers(), renderer);
 
 		// Populate the main Jao information and return it
@@ -123,10 +129,11 @@ public class JaoParser {
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
+	 * @throws ContentFileDoesNotExistException 
 	 */
 	private static List<JaoLayer> parseLayers(Jao jao, List<LayerModel> layers, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException, CannotFindJaoActionException {
+			CannotFindJaoInitializerException, CannotFindJaoActionException, ContentFileDoesNotExistException {
 		List<JaoLayer> layerInstances = new ArrayList<>();
 		for (LayerModel layer : layers)
 			layerInstances.add(parseLayer(jao, layer, renderer));
@@ -145,13 +152,14 @@ public class JaoParser {
 	 * @throws CannotFindJaoInitializerException
 	 * @throws CannotFindJaoLibraryException
 	 * @throws CannotFindJaoActionException
+	 * @throws ContentFileDoesNotExistException
 	 */
 	private static JaoLayer parseLayer(Jao jao, LayerModel layerModel, Class<? extends IRenderer> renderer)
 			throws CannotInstantiateJaoActionException, CannotInstantiateJaoRenderer, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException, CannotFindJaoActionException {
+			CannotFindJaoInitializerException, CannotFindJaoActionException, ContentFileDoesNotExistException {
 		// Create the renderer and set the data type into it
 		IRenderer rendererImpl = getRendererInstance(renderer);
-		rendererImpl.setDataType(layerModel.getDataType());
+		rendererImpl.setDataType(layerModel.getDataType(), jao.getExtractor());
 
 		// Instantiate the JAO layer and add the initializers and events to it
 		JaoLayer layer = new JaoLayer(jao, rendererImpl);

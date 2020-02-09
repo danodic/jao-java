@@ -3,6 +3,7 @@ package com.danodic.jao.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.danodic.jao.extractor.IExtractor;
 import com.danodic.jao.time.IClock;
 import com.danodic.jao.time.StandardClock;
 
@@ -37,6 +38,8 @@ public class Jao {
 	private Long elapsed;
 	private float scaleFactor;
 
+	private IExtractor extractor;
+
 	private IClock clock;
 
 	public Jao() {
@@ -44,6 +47,7 @@ public class Jao {
 		layers = new ArrayList<>();
 		elapsed = 0L;
 		scaleFactor = 1.0f;
+		extractor = null;
 	}
 
 	/**
@@ -205,6 +209,25 @@ public class Jao {
 	 */
 	public void setClock(IClock clock) {
 		this.clock = clock;
+	}
+
+	/**
+	 * The extractor provides the data that the layers will have to access.
+	 * 
+	 * @param extractor An instance of extractor can be obtained using the
+	 *                  ExtractorFactory class.
+	 */
+	public void setExtractor(IExtractor extractor) {
+		this.extractor = extractor;
+	}
+
+	/**
+	 * Returns the extractor currently assigned to this Jao instance.
+	 * 
+	 * @return An instance of IExtractor.
+	 */
+	public IExtractor getExtractor() {
+		return extractor;
 	}
 
 }
