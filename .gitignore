@@ -27,6 +27,7 @@ hs_err_pid*
 .vscode
 .classpath
 .sonar_lock.txt
+.env
 Download errors.txt
 
 target

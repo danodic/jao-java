@@ -2,18 +2,49 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.danodic</groupId>
 	<artifactId>jao-java</artifactId>
-	<version>0.0.1</version>
+	<version>0.9.0</version>
 	<name>Json Animation Objects</name>
 	<description>A library for animating elements using Json.</description>
+	<packaging>jar</packaging>
 	<build>
 		<sourceDirectory>${project.basedir}/src/main/java/</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/java/</testSourceDirectory>
 		<outputDirectory>${project.basedir}/target/classes/</outputDirectory>
 		<testOutputDirectory>${project.basedir}/target/test-classes/</testOutputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>target/jacoco.exec</dataFile>
+							<outputDirectory>target/jacoco-out</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+		<sonar.projectKey>danodic_jao-java</sonar.projectKey>
+		<sonar.organization>danodic</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.login>${env.SONARCLOUD_TOKEN}</sonar.login>
 	</properties>
 	<dependencies>
 		<dependency>
