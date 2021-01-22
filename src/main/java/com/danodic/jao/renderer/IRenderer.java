@@ -6,6 +6,9 @@ import com.danodic.jao.model.DataTypeModel;
 
 public interface IRenderer {
 	public void setDataType(DataTypeModel dataType, IExtractor extractor);
-	public void render(JaoLayer layer);
+	public void render(JaoLayer layer, Object ... args);
 	public void initialize(Object ... args);
+        public void dispose();
+        public IRenderer clone();
+        public void debug();
 }
