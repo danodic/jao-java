@@ -14,20 +14,27 @@ import com.danodic.jao.exceptions.ContentFileDoesNotExistException;
  */
 public interface IExtractor {
 
-	/**
-	 * 
-	 * @param filename Name of the file to get the bytes from.
-	 * @return A byte array representing the file contents.
-	 * @throws ContentFileDoesNotExistException In case the file request does not
-	 *                                          exists in the JAO file.
-	 */
-	public byte[] getData(String filename) throws ContentFileDoesNotExistException;
+    /**
+     * 
+     * @param filename Name of the file to get the bytes from.
+     * @return A byte array representing the file contents.
+     * @throws ContentFileDoesNotExistException In case the file request does not
+     *                                          exists in the JAO file.
+     */
+    public byte[] getData(String filename) throws ContentFileDoesNotExistException;
 
-	/**
-	 * Must return the string representation of the JSON file (jao.json).
-	 * 
-	 * @return Contents of jao.json.
-	 */
-	public String getJson();
+    /**
+     * Must return the string representation of the JSON file (jao.json).
+     * 
+     * @return Contents of jao.json.
+     */
+    public String getJson();
+
+    /**
+     * Return the name of the file loaded by this extractor.
+     * 
+     * @return Name of the file.
+     */
+    public String getFilename();
 
 }

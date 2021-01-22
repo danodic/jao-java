@@ -24,6 +24,7 @@ public class ZipExtractor implements IExtractor {
 
 	private String json;
 	private Map<String, byte[]> data;
+        private String filePath;
 
 	/**
 	 * @param filePath The name of the file to be loaded.
@@ -41,6 +42,7 @@ public class ZipExtractor implements IExtractor {
 		InputStream inputStream;
 
 		// Initialize data
+                this.filePath = filePath;
 		data = new HashMap<>();
 		json = null;
 
@@ -112,5 +114,10 @@ public class ZipExtractor implements IExtractor {
 	public String getJson() {
 		return this.json;
 	}
+
+    @Override
+    public String getFilename() {
+        return filePath;
+    }
 
 }
