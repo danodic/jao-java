@@ -61,4 +61,9 @@ public class TimeLordClock implements IClock {
         return delta;
     }
 
+    @Override
+    public IClock clone() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

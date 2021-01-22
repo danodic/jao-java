@@ -6,4 +6,5 @@ import com.danodic.jao.model.ActionModel;
 public interface IInitializer {
 	public void run(JaoLayer layer);
 	public void loadModel(ActionModel model);
+        public IInitializer clone();
 }

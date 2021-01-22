@@ -20,10 +20,10 @@ public class StandardClock implements IClock {
 
     @Override
     public long now() {
-        if(startTime==null) {
+        if (startTime == null) {
             reset();
         } else {
-            
+
             currentTime = Instant.now().toEpochMilli();
             lastFrameDelta = currentTime - lastFrameTime;
             lastFrameTime = currentTime;
@@ -49,5 +49,15 @@ public class StandardClock implements IClock {
     public long getLastFrameDelta() {
         return lastFrameDelta;
     }
-  
+
+    @Override
+    public IClock clone() {
+        StandardClock clone = new StandardClock();
+        clone.startTime = startTime;
+        clone.lastFrameTime = lastFrameTime;
+        clone.lastFrameDelta = lastFrameDelta;
+        clone.currentTime = currentTime;
+        return clone;
+    }
+
 }

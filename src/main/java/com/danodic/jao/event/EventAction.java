@@ -3,11 +3,11 @@ package com.danodic.jao.event;
 import com.danodic.jao.action.IAction;
 import com.danodic.jao.core.JaoLayer;
 
-public class EventAction implements Comparable<EventAction>{
+public class EventAction implements Comparable<EventAction> {
 	
-	private JaoLayer animation;
+	private final JaoLayer animation;
 	private IAction action; 
-	private long when;
+	private long when;       
 	
 	public EventAction(JaoLayer animation, IAction action, long when) {
 		// Store stuff
@@ -55,5 +55,9 @@ public class EventAction implements Comparable<EventAction>{
 	public void setLoop(boolean loop) {
 		action.setLoop(loop);
 	}
+        
+        public EventAction clone(JaoLayer layer) {
+            return new EventAction(layer, action.clone(), when);
+        }
 
 }

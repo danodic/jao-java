@@ -39,4 +39,6 @@ public interface IClock {
      * @return The interval between the last two frames in milliseconds.
      */
     public long getLastFrameDelta();
+    
+    public IClock clone();
 }
