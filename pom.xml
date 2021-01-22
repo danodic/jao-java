@@ -10,7 +10,7 @@
             <repository>
                 <id>github</id>
                 <name>GitHub Packages</name>
-                <url>https://maven.pkg.github.com/dev.danodic/jao-java</url>
+                <url>https://maven.pkg.github.com/danodic/jao-java</url>
             </repository>
         </distributionManagement>
 	<build>
