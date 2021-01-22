@@ -1,11 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.danodic</groupId>
+	<groupId>dev.danodic</groupId>
 	<artifactId>jao-java</artifactId>
-	<version>0.9.0</version>
+	<version>1.0.0</version>
 	<name>Json Animation Objects</name>
 	<description>A library for animating elements using Json.</description>
 	<packaging>jar</packaging>
+        <distributionManagement>
+            <repository>
+                <id>github</id>
+                <name>GitHub Packages</name>
+                <url>https://maven.pkg.github.com/dev.danodic/jao-java</url>
+            </repository>
+        </distributionManagement>
 	<build>
 		<sourceDirectory>${project.basedir}/src/main/java/</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/java/</testSourceDirectory>
