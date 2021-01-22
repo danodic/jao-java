@@ -18,251 +18,265 @@ import com.danodic.jao.model.ActionModel;
 
 public class ActionFactory {
 
-	// TODO: Extend a data structure just to give it a different name. Is it a good
-	// idea?
-	private static class ActionLibrary extends LinkedHashMap<String, Class<? extends IAction>> {
-		private static final long serialVersionUID = 5319075828568574182L;
-	}
+    private static Boolean factoryInitialized = false;
 
-	private static class InitializerLibrary extends LinkedHashMap<String, Class<? extends IInitializer>> {
-		private static final long serialVersionUID = 5319075828568574182L;
-	}
+    // TODO: Extend a data structure just to give it a different name. Is it a good
+    // idea?
+    private static class ActionLibrary extends LinkedHashMap<String, Class<? extends IAction>> {
 
-	private static LinkedHashMap<String, ActionLibrary> actionLibrary = new LinkedHashMap<>();
-	private static LinkedHashMap<String, InitializerLibrary> initializerLibrary = new LinkedHashMap<>();
+        private static final long serialVersionUID = 5319075828568574182L;
+    }
 
-	private ActionFactory() {
-	}
+    private static class InitializerLibrary extends LinkedHashMap<String, Class<? extends IInitializer>> {
 
-	/**
-	 * Will scan the classpath and look for classes annotated with @Action and that
-	 * extends IAction. This is used to find the custom-built libraries and store
-	 * them into a list of libraries.
-	 */
-	public static void initializeFactory() {
-		Reflections reflections = new Reflections(
-				new ConfigurationBuilder().setUrls(ClasspathHelper.forJavaClassPath()));
+        private static final long serialVersionUID = 5319075828568574182L;
+    }
 
-		scanInitializers(reflections);
-		scanActions(reflections);
+    private static LinkedHashMap<String, ActionLibrary> actionLibrary = new LinkedHashMap<>();
+    private static LinkedHashMap<String, InitializerLibrary> initializerLibrary = new LinkedHashMap<>();
 
-	}
+    private ActionFactory() {
+    }
 
-	private static void scanInitializers(Reflections reflections) {
-		List<Class<? extends IInitializer>> classes = new ArrayList<>(reflections.getSubTypesOf(IInitializer.class));
-		for (Class<? extends IInitializer> clazz : classes) {
-			if (clazz.isAnnotationPresent(Action.class)) {
-				for (Constructor<?> cons : clazz.getConstructors()) {
-					if (cons.getParameterCount() == 0) {
-						registerInitializer(clazz);
-						break;
-					}
-				}
-			}
-		}
-	}
+    /**
+     * Will scan the classpath and look for classes annotated with @Action and
+     * that extends IAction. This is used to find the custom-built libraries and
+     * store them into a list of libraries.
+     */
+    public static void initializeFactory() {
 
-	private static void scanActions(Reflections reflections) {
-		List<Class<? extends IAction>> classes = new ArrayList<>(reflections.getSubTypesOf(IAction.class));
-		for (Class<? extends IAction> clazz : classes) {
-			if (clazz.isAnnotationPresent(Action.class)) {
-				for (Constructor<?> cons : clazz.getConstructors()) {
-					if (cons.getParameterCount() == 0) {
-						registerAction(clazz);
-						break;
-					}
-				}
-			}
-		}
-	}
+        if (factoryInitialized) {
+            return;
+        }
+        
+        Reflections reflections = new Reflections(
+                new ConfigurationBuilder().setUrls(ClasspathHelper.forJavaClassPath()));
 
-	/**
-	 * Will get an action and will register its informations in the proper library
-	 * store. If there is no library store created for this class yet, it will
-	 * instantiate it.
-	 * 
-	 * @param action
-	 */
-	private static void registerAction(Class<? extends IAction> action) {
-		String actionName = action.getAnnotation(Action.class).name();
-		String libraryName = action.getAnnotation(Action.class).library();
+        scanInitializers(reflections);
+        scanActions(reflections);
+        
+        factoryInitialized = true;
 
-		if (!actionLibrary.containsKey(libraryName))
-			actionLibrary.put(libraryName, new ActionLibrary());
+    }
 
-		actionLibrary.get(libraryName).put(actionName, action);
-	}
+    private static void scanInitializers(Reflections reflections) {
+        List<Class<? extends IInitializer>> classes = new ArrayList<>(reflections.getSubTypesOf(IInitializer.class));
+        for (Class<? extends IInitializer> clazz : classes) {
+            if (clazz.isAnnotationPresent(Action.class)) {
+                for (Constructor<?> cons : clazz.getConstructors()) {
+                    if (cons.getParameterCount() == 0) {
+                        registerInitializer(clazz);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
-	private static void registerInitializer(Class<? extends IInitializer> initializer) {
-		String actionName = initializer.getAnnotation(Action.class).name();
-		String libraryName = initializer.getAnnotation(Action.class).library();
+    private static void scanActions(Reflections reflections) {
+        List<Class<? extends IAction>> classes = new ArrayList<>(reflections.getSubTypesOf(IAction.class));
+        for (Class<? extends IAction> clazz : classes) {
+            if (clazz.isAnnotationPresent(Action.class)) {
+                for (Constructor<?> cons : clazz.getConstructors()) {
+                    if (cons.getParameterCount() == 0) {
+                        registerAction(clazz);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
-		if (!initializerLibrary.containsKey(libraryName))
-			initializerLibrary.put(libraryName, new InitializerLibrary());
+    /**
+     * Will get an action and will register its informations in the proper
+     * library store. If there is no library store created for this class yet,
+     * it will instantiate it.
+     *
+     * @param action
+     */
+    private static void registerAction(Class<? extends IAction> action) {
+        String actionName = action.getAnnotation(Action.class).name();
+        String libraryName = action.getAnnotation(Action.class).library();
 
-		initializerLibrary.get(libraryName).put(actionName, initializer);
-	}
+        if (!actionLibrary.containsKey(libraryName)) {
+            actionLibrary.put(libraryName, new ActionLibrary());
+        }
 
-	/**
-	 * Will find an action in the action library and will return an instance of it.
-	 * 
-	 * @param libraryName
-	 * @param actionName
-	 * @return an instance of a class that implements IEvent.
-	 * @throws CannotInstantiateJaoActionException
-	 * @throws CannotFindJaoInitializerException
-	 * @throws CannotFindJaoLibraryException
-	 */
-	public static IAction getAction(String libraryName, String actionName)
-			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
-		return getAction(libraryName, actionName, null);
-	}
+        actionLibrary.get(libraryName).put(actionName, action);
+    }
 
-	/**
-	 * Will find an action in the action library and will return an instance of it.
-	 * This instance will be pre-populated with the data provided in the ActionModel
-	 * instance passed as argument.
-	 * 
-	 * @param libraryName Name of the library to get the event from.
-	 * @param actionName  Name of the action to be retrieved from the library.
-	 * @param model       The data of the action parsed from the Json file.
-	 * @return an instance of a class that implements IAction.
-	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate the
-	 *                                             initializer.
-	 * @throws CannotFindJaoLibraryException
-	 * @throws CannotFindJaoInitializerException
-	 * @throws CannotFindJaoActionException
-	 */
-	@SuppressWarnings("unchecked")
-	public static IAction getAction(String libraryName, String actionName, ActionModel model)
-			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
-		IAction action;
-		Constructor<IAction> defaultContructor;
+    private static void registerInitializer(Class<? extends IInitializer> initializer) {
+        String actionName = initializer.getAnnotation(Action.class).name();
+        String libraryName = initializer.getAnnotation(Action.class).library();
 
-		// Initialize stuff
-		defaultContructor = null;
+        if (!initializerLibrary.containsKey(libraryName)) {
+            initializerLibrary.put(libraryName, new InitializerLibrary());
+        }
 
-		// Handle errors
-		if (!actionLibrary.containsKey(libraryName)) {
-			throw new CannotFindJaoLibraryException(libraryName);
-		}
-		if (!actionLibrary.get(libraryName).containsKey(actionName)) {
-			throw new CannotFindJaoActionException(actionName);
-		}
+        initializerLibrary.get(libraryName).put(actionName, initializer);
+    }
 
-		// Get the constructor with no parameters
-		for (Constructor<?> constructor : actionLibrary.get(libraryName).get(actionName).getConstructors()) {
-			if (constructor.getParameterCount() == 0) {
-				defaultContructor = (Constructor<IAction>) constructor;
-				break;
-			}
-		}
+    /**
+     * Will find an action in the action library and will return an instance of
+     * it.
+     *
+     * @param libraryName
+     * @param actionName
+     * @return an instance of a class that implements IEvent.
+     * @throws CannotInstantiateJaoActionException
+     * @throws CannotFindJaoInitializerException
+     * @throws CannotFindJaoLibraryException
+     */
+    public static IAction getAction(String libraryName, String actionName)
+            throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
+        return getAction(libraryName, actionName, null);
+    }
 
-		// Throw an error in case the constructor was not found
-		if (defaultContructor == null) {
-			throw new CannotInstantiateJaoActionException(actionName,
-					new RuntimeException("No argument-free constructor was found for action."));
-		}
+    /**
+     * Will find an action in the action library and will return an instance of
+     * it. This instance will be pre-populated with the data provided in the
+     * ActionModel instance passed as argument.
+     *
+     * @param libraryName Name of the library to get the event from.
+     * @param actionName Name of the action to be retrieved from the library.
+     * @param model The data of the action parsed from the Json file.
+     * @return an instance of a class that implements IAction.
+     * @throws CannotInstantiateJaoActionException In case it cannot instantiate
+     * the initializer.
+     * @throws CannotFindJaoLibraryException
+     * @throws CannotFindJaoInitializerException
+     * @throws CannotFindJaoActionException
+     */
+    @SuppressWarnings("unchecked")
+    public static IAction getAction(String libraryName, String actionName, ActionModel model)
+            throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException, CannotFindJaoActionException {
+        IAction action;
+        Constructor<IAction> defaultContructor;
 
-		try {
-			// Get the action from the library and instantiate it
-			action = defaultContructor.newInstance();
+        // Initialize stuff
+        defaultContructor = null;
 
-			// In case the call has a model, load it
-			if (model != null) {
-				action.loadModel(model);
-				action.reset();
-			}
+        // Handle errors
+        if (!actionLibrary.containsKey(libraryName)) {
+            throw new CannotFindJaoLibraryException(libraryName);
+        }
+        if (!actionLibrary.get(libraryName).containsKey(actionName)) {
+            throw new CannotFindJaoActionException(actionName);
+        }
 
-			return action;
+        // Get the constructor with no parameters
+        for (Constructor<?> constructor : actionLibrary.get(libraryName).get(actionName).getConstructors()) {
+            if (constructor.getParameterCount() == 0) {
+                defaultContructor = (Constructor<IAction>) constructor;
+                break;
+            }
+        }
 
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			throw new CannotInstantiateJaoActionException(actionName, e);
-		}
+        // Throw an error in case the constructor was not found
+        if (defaultContructor == null) {
+            throw new CannotInstantiateJaoActionException(actionName,
+                    new RuntimeException("No argument-free constructor was found for action."));
+        }
 
-	}
+        try {
+            // Get the action from the library and instantiate it
+            action = defaultContructor.newInstance();
 
-	/**
-	 * Will find an initializer in the initializer library and will return an
-	 * instance of it.
-	 * 
-	 * @param libraryName
-	 * @param initializerName
-	 * @return an instance of a class that implements IInitializer.
-	 * @throws CannotInstantiateJaoActionException
-	 * @throws CannotFindJaoInitializerException
-	 * @throws CannotFindJaoLibraryException
-	 */
-	public static IInitializer getInitializer(String libraryName, String initializerName)
-			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException {
-		return getInitializer(libraryName, initializerName, null);
-	}
+            // In case the call has a model, load it
+            if (model != null) {
+                action.loadModel(model);
+                action.reset();
+            }
 
-	/**
-	 * Will find an initializer in the initializer library and will return an
-	 * instance of it. This instance will be pre-populated with the data provided in
-	 * the ActionModel instance passed as argument.
-	 * 
-	 * @param libraryName    Name of the library to get the initializer from.
-	 * @param initializeName Name of the initializer to be retrieved from the
-	 *                       library.
-	 * @param model          The data of the action parsed from the Json file.
-	 * @return an instance of a class that implements IInitializer.
-	 * @throws CannotInstantiateJaoActionException In case it cannot instantiate the
-	 *                                             initializer.
-	 * @throws CannotFindJaoLibraryException
-	 * @throws CannotFindJaoInitializerException
-	 */
-	@SuppressWarnings("unchecked")
-	public static IInitializer getInitializer(String libraryName, String initializeName, ActionModel model)
-			throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
-			CannotFindJaoInitializerException {
-		IInitializer initializer;
-		Constructor<IInitializer> defaultContructor;
+            return action;
 
-		// Initialize stuff
-		defaultContructor = null;
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            throw new CannotInstantiateJaoActionException(actionName, e);
+        }
 
-		// Handle errors
-		if (!initializerLibrary.containsKey(libraryName)) {
-			throw new CannotFindJaoLibraryException(libraryName);
-		}
-		if (!initializerLibrary.get(libraryName).containsKey(initializeName)) {
-			throw new CannotFindJaoInitializerException(initializeName);
-		}
+    }
 
-		// Get the constructor with no parameters
-		for (Constructor<?> constructor : initializerLibrary.get(libraryName).get(initializeName).getConstructors()) {
-			if (constructor.getParameterCount() == 0) {
-				defaultContructor = (Constructor<IInitializer>) constructor;
-				break;
-			}
-		}
+    /**
+     * Will find an initializer in the initializer library and will return an
+     * instance of it.
+     *
+     * @param libraryName
+     * @param initializerName
+     * @return an instance of a class that implements IInitializer.
+     * @throws CannotInstantiateJaoActionException
+     * @throws CannotFindJaoInitializerException
+     * @throws CannotFindJaoLibraryException
+     */
+    public static IInitializer getInitializer(String libraryName, String initializerName)
+            throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
+            CannotFindJaoInitializerException {
+        return getInitializer(libraryName, initializerName, null);
+    }
 
-		// Throw an error in case the constructor was not found
-		if (defaultContructor == null) {
-			throw new CannotInstantiateJaoActionException(initializeName,
-					new RuntimeException("No argument-free constructor was found for initializer."));
-		}
+    /**
+     * Will find an initializer in the initializer library and will return an
+     * instance of it. This instance will be pre-populated with the data
+     * provided in the ActionModel instance passed as argument.
+     *
+     * @param libraryName Name of the library to get the initializer from.
+     * @param initializeName Name of the initializer to be retrieved from the
+     * library.
+     * @param model The data of the action parsed from the Json file.
+     * @return an instance of a class that implements IInitializer.
+     * @throws CannotInstantiateJaoActionException In case it cannot instantiate
+     * the initializer.
+     * @throws CannotFindJaoLibraryException
+     * @throws CannotFindJaoInitializerException
+     */
+    @SuppressWarnings("unchecked")
+    public static IInitializer getInitializer(String libraryName, String initializeName, ActionModel model)
+            throws CannotInstantiateJaoActionException, CannotFindJaoLibraryException,
+            CannotFindJaoInitializerException {
+        IInitializer initializer;
+        Constructor<IInitializer> defaultContructor;
 
-		try {
-			// Get the action from the library and instantiate it
-			initializer = defaultContructor.newInstance();
+        // Initialize stuff
+        defaultContructor = null;
 
-			// In case the call has a model, load it
-			if (model != null) {
-				initializer.loadModel(model);
-			}
+        // Handle errors
+        if (!initializerLibrary.containsKey(libraryName)) {
+            throw new CannotFindJaoLibraryException(libraryName);
+        }
+        if (!initializerLibrary.get(libraryName).containsKey(initializeName)) {
+            throw new CannotFindJaoInitializerException(initializeName);
+        }
 
-			return initializer;
+        // Get the constructor with no parameters
+        for (Constructor<?> constructor : initializerLibrary.get(libraryName).get(initializeName).getConstructors()) {
+            if (constructor.getParameterCount() == 0) {
+                defaultContructor = (Constructor<IInitializer>) constructor;
+                break;
+            }
+        }
 
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			throw new CannotInstantiateJaoActionException(initializeName, e);
-		}
+        // Throw an error in case the constructor was not found
+        if (defaultContructor == null) {
+            throw new CannotInstantiateJaoActionException(initializeName,
+                    new RuntimeException("No argument-free constructor was found for initializer."));
+        }
 
-	}
+        try {
+            // Get the action from the library and instantiate it
+            initializer = defaultContructor.newInstance();
+
+            // In case the call has a model, load it
+            if (model != null) {
+                initializer.loadModel(model);
+            }
+
+            return initializer;
+
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            throw new CannotInstantiateJaoActionException(initializeName, e);
+        }
+
+    }
 
 }
