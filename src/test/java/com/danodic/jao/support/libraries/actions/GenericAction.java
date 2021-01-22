@@ -63,4 +63,9 @@ public class GenericAction implements IAction {
         return model;
     }
 
+    @Override
+    public IAction clone() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

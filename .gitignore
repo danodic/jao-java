@@ -23,7 +23,7 @@ hs_err_pid*
 /bin/
 
 .project
-.settings
+.settings/*
 .vscode
 .classpath
 .sonar_lock.txt
@@ -31,3 +31,4 @@ Download errors.txt
 
 target
 test-output
+nbactions.xml

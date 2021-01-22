@@ -45,5 +45,10 @@ public class GenericInitializer implements IInitializer {
     public void setDone(boolean done) {
         this.done = done;
     }
+
+    @Override
+    public IInitializer clone() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

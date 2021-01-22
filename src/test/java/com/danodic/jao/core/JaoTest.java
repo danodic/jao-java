@@ -79,13 +79,14 @@ public class JaoTest {
     }
 
     @Test
-    public void testGetLastFrameTime() {
+    public void testGetLastFrameTime() throws InterruptedException {
         TimeLordClock theTimeAndSpaceParadox = new TimeLordClock();
         jao.setClock(theTimeAndSpaceParadox);
         
         theTimeAndSpaceParadox.setTime(6000L);
         Long before = Instant.now().toEpochMilli();
         jao.render();
+        Thread.sleep(10);
         Long after = Instant.now().toEpochMilli();
 
         assert before <= jao.getLastFrameTime();

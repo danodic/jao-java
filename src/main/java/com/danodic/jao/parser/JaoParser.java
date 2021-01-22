@@ -37,6 +37,8 @@ import com.google.gson.Gson;
  * @author danodic
  */
 public class JaoParser {
+    
+        
 
 	private JaoParser() {
 		
@@ -68,7 +70,7 @@ public class JaoParser {
 		JaoModel model = deserializeJson(json);
 
 		// Initialize the action factory to find all the entries in the classpath
-		ActionFactory.initializeFactory();
+                ActionFactory.initializeFactory();
 
 		// Parse the model and return the instance
 		return parseJaoModel(model, extractor, renderer);
