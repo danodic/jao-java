@@ -20,9 +20,8 @@ public class ExtractorTest {
     public Object[][] provideFileNames() {
         return new Object[][] {
             new Object[] { Defaults.SAMPLE_FOLDER },
-        //    new Object[] { Defaults.SAMPLE_JAO },
-        //    new Object[] { Defaults.SAMPLE_ZIP }
-        };
+            new Object[] { Defaults.SAMPLE_JAO },
+            new Object[] { Defaults.SAMPLE_ZIP } };
     }
 
     @Test(dataProvider = "provideFileNames")
